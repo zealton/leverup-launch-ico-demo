@@ -13,7 +13,6 @@ const PREMIUM = 0.2;
 const PRICE_REFRESH_MS = 5_000;
 
 const state = {
-  displayUnit: "MON",
   monUsd: 0.03,
   raiseValue: 230_000,
   publicSalePct: 0,
@@ -24,11 +23,6 @@ const state = {
 const $ = (id) => document.getElementById(id);
 
 const refs = {
-  unitUsd: $("unitUsd"),
-  unitLvmon: $("unitLvmon"),
-  monPrice: $("monPrice"),
-  refreshPrice: $("refreshPrice"),
-  priceMeta: $("priceMeta"),
   raiseInput: $("raiseInput"),
   raiseRange: $("raiseRange"),
   raiseSuffix: $("raiseSuffix"),
@@ -275,6 +269,15 @@ function formatUsdExact(value) {
 
 function formatTokenExact(value, symbol) {
   return `${Math.round(Number(value)).toLocaleString("en-US")} ${symbol}`;
+}
+
+function formatRaiseAmount(value) {
+  return Math.round(Number(value) || 0).toLocaleString("en-US");
+}
+
+function parseRaiseAmount(value) {
+  const normalized = String(value).replace(/[^\d.]/g, "");
+  return Number(normalized);
 }
 
 function escapeHtml(value) {
@@ -775,11 +778,6 @@ function calculateTokenomics(raiseLvmon) {
   };
 }
 
-function setDisplayUnit(nextUnit) {
-  state.displayUnit = nextUnit;
-  render();
-}
-
 function clampRaise() {
   const floor = currentFloor();
   if (!Number.isFinite(state.raiseValue) || state.raiseValue < floor) {
@@ -788,7 +786,7 @@ function clampRaise() {
 }
 
 function syncRaiseInput(value, shouldClamp = false) {
-  const parsed = Number(value);
+  const parsed = parseRaiseAmount(value);
   if (Number.isFinite(parsed)) {
     state.raiseValue = parsed;
   }
@@ -879,7 +877,6 @@ function renderPrebuy() {
 }
 
 function render({ clamp = true } = {}) {
-  state.monUsd = Math.max(0.0001, Number(refs.monPrice.value) || 0.03);
   if (clamp) clampRaise();
   const floor = currentFloor();
   const model = calculateTokenomics(toLvmon());
@@ -888,15 +885,10 @@ function render({ clamp = true } = {}) {
   state.publicSaleTokens = model.tUser;
   state.userPrice = model.pUser;
 
-  refs.unitUsd.classList.toggle("active", state.displayUnit === "USD");
-  refs.unitLvmon.classList.toggle("active", state.displayUnit === "MON");
   refs.raiseSuffix.textContent = "MON";
-  refs.raiseInput.step = currentStep();
-  refs.raiseInput.min = floor;
-  refs.raiseInput.value = Math.round(state.raiseValue);
+  refs.raiseInput.value = formatRaiseAmount(state.raiseValue);
   refs.floorLabel.textContent = `Minimum: ${formatWhole(floor, "", " MON")} graduation threshold. No hard maximum.`;
-  refs.raiseEquivalent.hidden = state.displayUnit !== "USD";
-  refs.raiseEquivalent.textContent = `${formatWhole(state.raiseValue, "", " MON")} = ${formatCompact(state.raiseValue * state.monUsd, "$")} at current MON price`;
+  refs.raiseEquivalent.textContent = `USD equivalent: ${formatUsdExact(state.raiseValue * state.monUsd)}`;
   configureRange();
 
   refs.graduationBadge.textContent = model.graduated ? "Graduated" : "Below Threshold";
@@ -924,31 +916,21 @@ function render({ clamp = true } = {}) {
 }
 
 async function refreshMonPrice({ silent = false } = {}) {
-  if (!silent) refs.priceMeta.textContent = "Fetching CoinGecko price...";
   try {
     const response = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=monad&vs_currencies=usd");
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     const json = await response.json();
     const price = json?.monad?.usd;
     if (!Number.isFinite(price) || price <= 0) throw new Error("Price unavailable");
-    refs.monPrice.value = price;
-    refs.priceMeta.textContent = `Auto refresh: ${formatCompact(price, "$")} / MON`;
+    state.monUsd = price;
     render();
   } catch (error) {
-    if (!silent) refs.priceMeta.textContent = `Price fetch failed. Current MON price kept.`;
+    if (!silent) render();
   }
 }
 
-refs.unitUsd.addEventListener("click", () => setDisplayUnit("USD"));
-refs.unitLvmon.addEventListener("click", () => setDisplayUnit("MON"));
-refs.monPrice.addEventListener("input", () => {
-  state.monUsd = Math.max(0.0001, Number(refs.monPrice.value) || 0.03);
-  clampRaise();
-  render();
-});
-refs.refreshPrice.addEventListener("click", refreshMonPrice);
 refs.raiseInput.addEventListener("input", (event) => {
-  const parsed = Number(event.target.value);
+  const parsed = parseRaiseAmount(event.target.value);
   if (Number.isFinite(parsed)) state.raiseValue = parsed;
   render({ clamp: false });
 });

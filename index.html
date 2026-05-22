@@ -140,39 +140,20 @@
           <div class="panel-head">
             <div>
               <h2>Tokenomics</h2>
-              <p>Raise is configured in MON. USD equivalent can be toggled in the raise panel.</p>
+              <p>Raise is configured in MON. USD equivalent updates automatically in the background.</p>
             </div>
             <span class="panel-index">02</span>
           </div>
 
           <div class="tokenomics-controls">
-            <div class="display-toggle">
-              <span>Raise Display</span>
-              <div class="segmented" role="group" aria-label="Raise display">
-                <button id="unitLvmon" class="active" type="button" data-unit="MON">MON</button>
-                <button id="unitUsd" type="button" data-unit="USD">USD Value</button>
-              </div>
-            </div>
-
-            <label class="field price-field">
-              <span>MON-USD Price</span>
-              <div class="input-action">
-                <input id="monPrice" type="number" min="0.0001" step="0.0001" value="0.03">
-                <button id="refreshPrice" type="button" aria-label="Refresh MON price">
-                  <i data-lucide="refresh-cw"></i>
-                </button>
-              </div>
-              <small id="priceMeta">Fallback price loaded.</small>
-            </label>
-
             <label class="field raise-field">
               <span>ICO Raise Amount</span>
               <div class="amount-input">
-                <input id="raiseInput" type="number" step="10000" value="230000">
+                <input id="raiseInput" type="text" inputmode="numeric" autocomplete="off" value="230,000">
                 <strong id="raiseSuffix">MON</strong>
               </div>
               <small id="floorLabel">Minimum: 230,000 MON graduation threshold. No hard maximum.</small>
-              <div id="raiseEquivalent" class="raise-equivalent" hidden></div>
+              <div id="raiseEquivalent" class="raise-equivalent"></div>
             </label>
           </div>
 
