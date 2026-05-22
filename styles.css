@@ -507,6 +507,22 @@ button {
   color: var(--accent-long);
   font-family: var(--font-mono);
   font-weight: 800;
+  overflow: hidden;
+}
+
+.token-mark.has-image {
+  background: var(--bg-surface-2);
+}
+
+.token-mark img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.token-mark.has-image > span {
+  display: none;
 }
 
 .token-title div {

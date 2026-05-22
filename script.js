@@ -83,6 +83,7 @@ const launchTokens = [
     id: "mush",
     name: "Mushroom",
     ticker: "MUSH",
+    icon: "assets/token-icons/mush.svg",
     status: "Live",
     contract: "0x4f8c...8a2e",
     targetMon: 620_000,
@@ -152,6 +153,7 @@ const launchTokens = [
     id: "byte",
     name: "Byte Forge",
     ticker: "BYTE",
+    icon: "assets/token-icons/byte.svg",
     status: "Live",
     contract: "0x7a12...f0c9",
     targetMon: 1_200_000,
@@ -219,6 +221,7 @@ const launchTokens = [
     id: "signal",
     name: "Monad Signal",
     ticker: "SIGN",
+    icon: "assets/token-icons/sign.svg",
     status: "Launched",
     contract: "0x2c94...31bd",
     targetMon: 700_000,
@@ -245,6 +248,7 @@ const launchTokens = [
     id: "vault",
     name: "Vault Rush",
     ticker: "VLT",
+    icon: "assets/token-icons/vlt.svg",
     status: "Launched",
     contract: "0x8f22...19de",
     targetMon: 450_000,
@@ -270,6 +274,7 @@ const launchTokens = [
     id: "orbit",
     name: "Orbit Desk",
     ticker: "ORBT",
+    icon: "assets/token-icons/orbt.svg",
     status: "Launched",
     contract: "0x1d4e...8f70",
     targetMon: 900_000,
@@ -370,6 +375,17 @@ function renderProjectInfoBlock(label, html, fallback) {
   `;
 }
 
+function renderTokenMark(token) {
+  const fallback = escapeHtml(token.ticker.slice(0, 1));
+  if (!token.icon) return `<span class="token-mark">${fallback}</span>`;
+  return `
+    <span class="token-mark has-image">
+      <img src="${escapeHtml(token.icon)}" alt="${escapeHtml(token.name)} icon">
+      <span>${fallback}</span>
+    </span>
+  `;
+}
+
 function tokenProgress(token) {
   return Math.min(100, (token.raisedMon / token.targetMon) * 100);
 }
@@ -448,7 +464,7 @@ function renderDashboardCard(token, mode) {
       <a class="dash-card" href="#/launch/${token.id}">
         <div class="launch-card-head">
           <div class="token-title">
-            <span class="token-mark">${escapeHtml(token.ticker.slice(0, 1))}</span>
+            ${renderTokenMark(token)}
             <div>
               <strong>${escapeHtml(token.name)}</strong>
               <span>$${escapeHtml(token.ticker)}</span>
@@ -471,7 +487,7 @@ function renderDashboardCard(token, mode) {
   return `
     <article class="mine-row" role="link" tabindex="0" data-detail-href="#/launch/${token.id}" aria-label="Open ${escapeHtml(token.name)} detail">
       <div class="token-title compact-token">
-        <span class="token-mark">${escapeHtml(token.ticker.slice(0, 1))}</span>
+        ${renderTokenMark(token)}
         <div>
           <strong>${escapeHtml(token.name)}</strong>
           <span>$${escapeHtml(token.ticker)} · ${escapeHtml(token.mineEpoch)}</span>
@@ -742,7 +758,7 @@ function renderLaunchDetail(id) {
       <section class="detail-title">
         <div class="detail-head">
           <div class="token-title">
-            <span class="token-mark">${escapeHtml(token.ticker.slice(0, 1))}</span>
+            ${renderTokenMark(token)}
             <div>
               <h1>${escapeHtml(token.name)}</h1>
               <span>$${escapeHtml(token.ticker)} · ${escapeHtml(token.contract)}</span>
