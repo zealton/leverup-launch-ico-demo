@@ -578,7 +578,7 @@ function renderLaunchDetail(id) {
       <div class="panel-head compact">
         <div>
           <h2>Trade to Mine</h2>
-          <p>Community allocation is distributed through trading activity with ${escapeHtml(token.ticker)} collateral.</p>
+          <p>Community allocation is distributed through trading activity on the token trading page.</p>
         </div>
         <span class="status-chip live">${escapeHtml(token.mineEpoch)} · LIVE</span>
       </div>
@@ -588,7 +588,7 @@ function renderLaunchDetail(id) {
           <strong>${formatTokenExact(token.mineTokens, escapeHtml(token.ticker))}</strong>
           <small>${formatUsdExact(token.mineValueUsd)} estimated value · resets in ${escapeHtml(token.epochEndsIn || "4d")}</small>
         </div>
-        <button type="button">Trade with ${escapeHtml(token.ticker)} as collateral</button>
+        <a href="${escapeHtml(token.tradeUrl)}" target="_blank" rel="noreferrer">Trade</a>
       </div>
       <div class="trade-mine-grid">
         <article class="mining-rule-card">
