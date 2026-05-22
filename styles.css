@@ -367,16 +367,14 @@ button {
 }
 
 .token-title span,
-.status-chip,
-.result-chip {
+.status-chip {
   color: var(--text-muted);
   font-family: var(--font-mono);
   font-size: 11px;
   font-weight: 700;
 }
 
-.status-chip,
-.result-chip {
+.status-chip {
   padding: 5px 8px;
   border: 1px solid var(--border-default);
   border-radius: 4px;
@@ -389,10 +387,10 @@ button {
   background: var(--accent-long-bg);
 }
 
-.status-chip.ended {
-  color: var(--accent-short);
-  border-color: var(--accent-short-deep);
-  background: var(--accent-short-bg);
+.status-chip.launched {
+  color: var(--info);
+  border-color: rgba(18, 131, 218, 0.45);
+  background: rgba(18, 131, 218, 0.12);
 }
 
 .progress-block {
@@ -538,8 +536,7 @@ button {
   opacity: 0.45;
 }
 
-.action-buttons .invest-btn,
-.external-actions .mine-link {
+.action-buttons .invest-btn {
   color: var(--text-on-accent);
   border-color: var(--accent-long);
   background: var(--accent-long);
@@ -555,6 +552,87 @@ button {
   display: grid;
   gap: 8px;
   padding: 14px;
+}
+
+.launched-meta,
+.launched-summary {
+  padding: 10px 12px;
+  border: 1px solid var(--border-default);
+  border-radius: 4px;
+  background: var(--bg-panel);
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+
+.launched-summary {
+  margin: 14px 16px 0;
+}
+
+.trade-mine-panel {
+  overflow: hidden;
+}
+
+.trade-mine-hero {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+  padding: 16px;
+  border-bottom: 1px solid var(--border-default);
+}
+
+.trade-mine-hero div {
+  display: grid;
+  gap: 4px;
+}
+
+.trade-mine-hero span,
+.trade-mine-hero small,
+.mining-mode span {
+  color: var(--text-muted);
+}
+
+.trade-mine-hero strong {
+  color: var(--accent-long);
+  font-family: var(--font-mono);
+  font-size: 28px;
+}
+
+.trade-mine-hero button {
+  min-height: 38px;
+  border: 1px solid var(--accent-long);
+  border-radius: 4px;
+  background: var(--accent-long);
+  color: var(--text-on-accent);
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.trade-mine-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  padding: 14px;
+}
+
+.mining-mode {
+  display: grid;
+  gap: 12px;
+  margin: 0 14px 14px;
+  padding: 12px;
+  border: 1px solid var(--border-default);
+  border-radius: 6px;
+  background: var(--bg-surface-1);
+}
+
+.mining-mode div:first-child {
+  display: grid;
+  gap: 5px;
+}
+
+.leaderboard-mini {
+  padding: 0 14px 14px;
 }
 
 .tx-list {
@@ -1453,8 +1531,14 @@ input[type="range"] {
   .prebuy-readout,
   .card-metrics,
   .detail-metrics,
-  .action-buttons {
+  .action-buttons,
+  .trade-mine-grid {
     grid-template-columns: 1fr;
+  }
+
+  .trade-mine-hero {
+    align-items: stretch;
+    flex-direction: column;
   }
 
   h1 {

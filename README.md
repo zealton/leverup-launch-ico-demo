@@ -4,8 +4,8 @@ Static front-end demo for the LeverUp Launch ICO flow.
 
 ## Routes
 
-- `#/launch` - Launch list with Live / Ended filters and search
-- `#/launch/:id` - Token launch detail, mock invest / exit flow, buyback transactions, Trade to Mine entry
+- `#/launch` - Launch list with Live / Launched filters and search
+- `#/launch/:id` - Token launch detail, mock invest / exit flow, buyback transactions, embedded Trade to Mine program
 - `#/create` - Create Token page with MON-based raise configuration and tokenomics preview
 
 ## Local Preview

@@ -130,8 +130,7 @@ const launchTokens = [
     id: "signal",
     name: "Monad Signal",
     ticker: "SIGN",
-    status: "Ended",
-    result: "Launched",
+    status: "Launched",
     contract: "0x2c94...31bd",
     targetMon: 700_000,
     raisedMon: 700_000,
@@ -153,8 +152,7 @@ const launchTokens = [
     id: "vault",
     name: "Vault Rush",
     ticker: "VLT",
-    status: "Ended",
-    result: "Launched",
+    status: "Launched",
     contract: "0x8f22...19de",
     targetMon: 450_000,
     raisedMon: 450_000,
@@ -175,20 +173,22 @@ const launchTokens = [
     id: "orbit",
     name: "Orbit Desk",
     ticker: "ORBT",
-    status: "Ended",
-    result: "Failed",
+    status: "Launched",
     contract: "0x1d4e...8f70",
     targetMon: 900_000,
     raisedMon: 512_000,
     userContributionMon: 12_000,
-    marketCapUsd: 0,
-    buybackMon: 0,
-    mineTokens: 0,
-    mineValueUsd: 0,
-    mineEpoch: "Closed",
+    marketCapUsd: 88_000,
+    buybackMon: 9_600,
+    mineTokens: 2_100_000,
+    mineValueUsd: 29_400,
+    mineEpoch: "Epoch 15",
     nadUrl: "https://www.nad.fun/",
-    summary: "Raise ended below the configured target. Funds are marked refundable in this demo state.",
-    txs: [],
+    summary: "Desk token running a focused Trade to Mine pool for volume and P&L contributors.",
+    txs: [
+      ["0x6cd4...0a61", "2,900 MON", "Buyback"],
+      ["0x2f99...b711", "1,120 MON", "Buyback"],
+    ],
   },
 ];
 
@@ -264,21 +264,26 @@ function renderLaunchList() {
     const progress = tokenProgress(token);
     const remaining = tokenRemaining(token);
     const isLive = token.status === "Live";
-    const result = token.result ? `<span class="result-chip">${escapeHtml(token.result)}</span>` : "";
     const liveMetrics = `
       <div class="mini-metric"><span>Raised</span><strong>${formatCompact(token.raisedMon)} MON</strong></div>
       <div class="mini-metric"><span>Remaining</span><strong>${formatCompact(remaining)} MON</strong></div>
       <div class="mini-metric"><span>Your Entry</span><strong>${formatCompact(token.userContributionMon)} MON</strong></div>
     `;
-    const endedMetrics = token.result === "Launched" ? `
+    const launchedMetrics = `
+      <div class="mini-metric"><span>Market Cap</span><strong>${formatCompact(token.marketCapUsd, "$")}</strong></div>
       <div class="mini-metric"><span>Mineable</span><strong>${formatCompact(token.mineTokens)} ${escapeHtml(token.ticker)}</strong></div>
       <div class="mini-metric"><span>Mine Value</span><strong>${formatCompact(token.mineValueUsd, "$")}</strong></div>
-      <div class="mini-metric"><span>Buyback</span><strong>${formatCompact(token.buybackMon)} MON</strong></div>
-    ` : `
-      <div class="mini-metric"><span>Raised</span><strong>${formatCompact(token.raisedMon)} MON</strong></div>
-      <div class="mini-metric"><span>Target</span><strong>${formatCompact(token.targetMon)} MON</strong></div>
-      <div class="mini-metric"><span>Result</span><strong>Refundable</strong></div>
     `;
+    const statusClass = isLive ? "live" : "launched";
+    const progressHtml = isLive ? `
+      <div class="progress-block">
+        <div class="progress-label">
+          <span>Funding progress</span>
+          <strong>${progress.toFixed(1)}%</strong>
+        </div>
+        <div class="progress-track"><span style="width:${progress}%"></span></div>
+      </div>
+    ` : `<div class="launched-meta">Launch complete · Trade to Mine active</div>`;
 
     return `
       <a class="launch-card" href="#/launch/${token.id}">
@@ -290,18 +295,11 @@ function renderLaunchList() {
               <span>$${escapeHtml(token.ticker)} · ${escapeHtml(token.contract)}</span>
             </div>
           </div>
-          <span class="status-chip ${isLive ? "live" : "ended"}">${token.status}</span>
+          <span class="status-chip ${statusClass}">${token.status}</span>
         </div>
-        <div class="progress-block">
-          <div class="progress-label">
-            <span>${isLive ? "Funding progress" : `Ended · ${escapeHtml(token.result || "Closed")}`}</span>
-            <strong>${progress.toFixed(1)}%</strong>
-          </div>
-          <div class="progress-track"><span style="width:${progress}%"></span></div>
-        </div>
+        ${progressHtml}
         <p class="card-copy">${escapeHtml(token.summary)}</p>
-        <div class="card-metrics">${isLive ? liveMetrics : endedMetrics}</div>
-        ${result}
+        <div class="card-metrics">${isLive ? liveMetrics : launchedMetrics}</div>
       </a>
     `;
   }).join("") || `<div class="empty-state">No ${launchState.filter.toLowerCase()} launches match this search.</div>`;
@@ -315,7 +313,7 @@ function renderLaunchDetail(id) {
   const progress = tokenProgress(token);
   const remaining = tokenRemaining(token);
   const isLive = token.status === "Live";
-  const launched = token.status === "Ended" && token.result === "Launched";
+  const launched = token.status === "Launched";
   const message = launchState.detailMessage ? `<div class="notice info">${escapeHtml(launchState.detailMessage)}</div>` : "";
 
   const investPanel = isLive ? `
@@ -341,17 +339,56 @@ function renderLaunchDetail(id) {
     </section>
   ` : "";
 
-  const externalPanel = launched ? `
+  const postLaunchPanel = launched ? `
     <section class="panel">
       <div class="panel-head compact">
         <div>
-          <h2>Post Launch</h2>
-          <p>Community allocation is available for Trade to Mine.</p>
+          <h2>Trading</h2>
+          <p>Open the live Nad.Fun market for this launched token.</p>
         </div>
       </div>
       <div class="external-actions">
-        <a class="mine-link" href="https://leverup-earn-deploy.vercel.app/" target="_blank" rel="noreferrer">Trade to Mine ${escapeHtml(token.ticker)}</a>
         <a href="${escapeHtml(token.nadUrl)}" target="_blank" rel="noreferrer">Open nad.fun</a>
+      </div>
+    </section>
+  ` : "";
+
+  const tradeMinePanel = launched ? `
+    <section class="panel trade-mine-panel">
+      <div class="panel-head compact">
+        <div>
+          <h2>Trade to Mine</h2>
+          <p>Community allocation is distributed through trading activity with ${escapeHtml(token.ticker)} collateral.</p>
+        </div>
+        <span class="status-chip live">${escapeHtml(token.mineEpoch)} · LIVE</span>
+      </div>
+      <div class="trade-mine-hero">
+        <div>
+          <span>Mining Pool / Week</span>
+          <strong>${formatCompact(token.mineTokens)} ${escapeHtml(token.ticker)}</strong>
+          <small>${formatCompact(token.mineValueUsd, "$")} estimated value · resets in 4d 12h</small>
+        </div>
+        <button type="button">Trade with ${escapeHtml(token.ticker)} as collateral</button>
+      </div>
+      <div class="trade-mine-grid">
+        <article class="mini-metric"><span>Volume Share</span><strong>${formatCompact(token.mineTokens * 0.7)} ${escapeHtml(token.ticker)}</strong><small>70% of pool</small></article>
+        <article class="mini-metric"><span>P&L Share</span><strong>${formatCompact(token.mineTokens * 0.3)} ${escapeHtml(token.ticker)}</strong><small>30% of pool</small></article>
+        <article class="mini-metric"><span>Qualified Traders</span><strong>42</strong><small>Min volume $10k</small></article>
+      </div>
+      <div class="mining-mode">
+        <div>
+          <strong>Volume Mining</strong>
+          <span>Cross $10K minimum volume. Past the threshold, rewards distribute pro-rata by qualifying volume.</span>
+        </div>
+        <div class="progress-block">
+          <div class="progress-label"><span>Your volume: $24.82k qualified</span><strong>41.4%</strong></div>
+          <div class="progress-track"><span style="width:41.4%"></span></div>
+        </div>
+      </div>
+      <div class="leaderboard-mini">
+        <div class="tx-row"><span>#1 0xa7c2...8810</span><strong>+$8.42k</strong><span>${formatCompact(token.mineTokens * 0.087)} ${escapeHtml(token.ticker)}</span></div>
+        <div class="tx-row"><span>#2 0x3e09...2bf1</span><strong>+$5.64k</strong><span>${formatCompact(token.mineTokens * 0.058)} ${escapeHtml(token.ticker)}</span></div>
+        <div class="tx-row"><span>#3 0xd421...77ab</span><strong>+$4.21k</strong><span>${formatCompact(token.mineTokens * 0.044)} ${escapeHtml(token.ticker)}</span></div>
       </div>
     </section>
   ` : "";
@@ -375,7 +412,7 @@ function renderLaunchDetail(id) {
               <span>$${escapeHtml(token.ticker)} · ${escapeHtml(token.contract)}</span>
             </div>
           </div>
-          <span class="status-chip ${isLive ? "live" : "ended"}">${token.status}${token.result ? ` · ${escapeHtml(token.result)}` : ""}</span>
+          <span class="status-chip ${isLive ? "live" : "launched"}">${token.status}</span>
         </div>
         <p>${escapeHtml(token.summary)}</p>
       </section>
@@ -384,10 +421,10 @@ function renderLaunchDetail(id) {
         <div class="panel-head compact">
           <div>
             <h2>Funding</h2>
-            <p>Launch succeeds only when the configured MON target is fully filled.</p>
+            <p>${isLive ? "Launch succeeds only when the configured MON target is fully filled." : "Configured MON target has been filled and deploy has completed."}</p>
           </div>
         </div>
-        <div class="range-block">
+        ${isLive ? `<div class="range-block">
           <div class="progress-block">
             <div class="progress-label">
               <span>${formatCompact(token.raisedMon)} / ${formatCompact(token.targetMon)} MON</span>
@@ -395,16 +432,18 @@ function renderLaunchDetail(id) {
             </div>
             <div class="progress-track"><span style="width:${progress}%"></span></div>
           </div>
-        </div>
+        </div>` : `<div class="launched-summary">Target filled · ${formatCompact(token.targetMon)} MON deployed through launch flow</div>`}
         <div class="summary-grid">
           <article class="stat-card"><span>Remaining Capacity</span><strong>${formatCompact(remaining)} MON</strong><small>Before deploy trigger</small></article>
-          <article class="stat-card"><span>Your Contribution</span><strong>${formatCompact(token.userContributionMon)} MON</strong><small>${isLive ? "Can exit before target" : "Locked after ended"}</small></article>
+          <article class="stat-card"><span>Your Contribution</span><strong>${formatCompact(token.userContributionMon)} MON</strong><small>${isLive ? "Can exit before target" : "Locked after launch"}</small></article>
           <article class="stat-card"><span>Market Cap</span><strong>${formatCompact(token.marketCapUsd, "$")}</strong><small>Synced app estimate</small></article>
           <article class="stat-card"><span>Total Buyback</span><strong>${formatCompact(token.buybackMon)} MON</strong><small>Protocol buyback total</small></article>
         </div>
       </section>
 
       ${message}
+
+      ${tradeMinePanel}
 
       <section id="buybackPrintArea" class="panel">
         <div class="panel-head compact">
@@ -420,7 +459,7 @@ function renderLaunchDetail(id) {
 
     <aside class="detail-side">
       ${investPanel}
-      ${externalPanel}
+      ${postLaunchPanel}
       <section class="panel">
         <div class="panel-head compact">
           <div>
@@ -770,8 +809,7 @@ refs.launchDetail.addEventListener("click", (event) => {
     token.userContributionMon += amount;
     if (token.raisedMon >= token.targetMon) {
       token.raisedMon = token.targetMon;
-      token.status = "Ended";
-      token.result = "Launched";
+      token.status = "Launched";
       launchState.detailMessage = `${token.name} reached its MON target. Deploy is triggered and exits are now closed.`;
     } else {
       launchState.detailMessage = `Invested ${formatCompact(amount)} MON into ${token.name}.`;
