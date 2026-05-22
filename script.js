@@ -56,7 +56,6 @@ const refs = {
   prebuyTotalPct: $("prebuyTotalPct"),
   prebuyTokens: $("prebuyTokens"),
   prebuyMon: $("prebuyMon"),
-  prebuyUsd: $("prebuyUsd"),
   projectName: $("projectName"),
   ticker: $("ticker"),
   previewName: $("previewName"),
@@ -957,8 +956,7 @@ function renderPrebuy() {
   refs.prebuyLimit.textContent = `Max: 100% of Public Sale = ${formatPct(state.publicSalePct)} of total supply`;
   refs.prebuyTotalPct.textContent = formatPct(state.publicSalePct * ratio);
   refs.prebuyTokens.textContent = `${formatCompact(tokens)} tokens`;
-  refs.prebuyMon.textContent = `${formatCompact(mon)} MON`;
-  refs.prebuyUsd.textContent = formatCompact(mon * state.monUsd, "$");
+  refs.prebuyMon.textContent = `${formatCompact(mon)} MON (${formatCompact(mon * state.monUsd, "$")})`;
 }
 
 function render({ clamp = true } = {}) {
