@@ -231,6 +231,43 @@ button {
   overflow: auto;
 }
 
+.mine-dashboard-list {
+  gap: 0;
+  padding: 0;
+}
+
+.sort-tabs {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--border-default);
+  border-radius: 6px;
+  background: var(--bg-panel);
+}
+
+.sort-tabs button {
+  min-width: 44px;
+  min-height: 28px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.sort-tabs button:hover {
+  color: var(--text-primary);
+  background: var(--bg-surface-2);
+}
+
+.sort-tabs button.active {
+  color: var(--accent-long);
+  background: var(--accent-long-bg);
+}
+
 .dash-card {
   display: grid;
   gap: 12px;
@@ -312,6 +349,78 @@ button {
   margin-top: 4px;
   color: var(--accent-long);
   font-family: var(--font-mono);
+}
+
+.mine-row {
+  display: grid;
+  grid-template-columns:
+    minmax(128px, 1.4fr)
+    minmax(116px, 1fr)
+    minmax(74px, 0.58fr)
+    minmax(58px, 0.48fr)
+    minmax(74px, 0.58fr)
+    68px;
+  gap: 8px;
+  align-items: center;
+  min-width: 0;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border-default);
+}
+
+.mine-row:last-child {
+  border-bottom: 0;
+}
+
+.mine-row:hover {
+  background: var(--bg-surface-1);
+}
+
+.compact-token .token-mark {
+  width: 32px;
+  height: 32px;
+  font-size: 12px;
+}
+
+.row-metric {
+  min-width: 0;
+}
+
+.row-metric span {
+  display: block;
+  margin-bottom: 2px;
+  color: var(--text-subtle);
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.row-metric strong {
+  display: block;
+  overflow: hidden;
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.row-actions {
+  display: inline-flex;
+  justify-content: flex-end;
+  gap: 10px;
+  align-items: center;
+}
+
+.row-actions a {
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.row-actions a:hover {
+  color: var(--accent-long);
 }
 
 .launch-card {
@@ -1610,6 +1719,27 @@ input[type="range"] {
 
   .launch-list {
     max-height: none;
+  }
+
+  .panel-head:has(.sort-tabs) {
+    display: grid;
+  }
+
+  .sort-tabs {
+    width: max-content;
+  }
+
+  .mine-row {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  .compact-token,
+  .row-actions {
+    grid-column: 1 / -1;
+  }
+
+  .row-actions {
+    justify-content: flex-start;
   }
 }
 

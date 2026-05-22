@@ -82,6 +82,7 @@ const refs = {
 
 const launchState = {
   detailMessage: "",
+  mineSort: "yield",
 };
 
 const launchTokens = [
@@ -152,6 +153,7 @@ const launchTokens = [
     mineValueUsd: 301_770,
     mineEpoch: "Epoch 15",
     epochEndsIn: "4d 12h",
+    epochRemainingHours: 108,
     nadUrl: "https://www.nad.fun/",
     tradeUrl: "https://sign-token.leverup.xyz",
     summary: "Launch intelligence token with Community allocation routed to Trade to Mine.",
@@ -177,6 +179,7 @@ const launchTokens = [
     mineValueUsd: 61_600,
     mineEpoch: "Epoch 14",
     epochEndsIn: "2d 08h",
+    epochRemainingHours: 56,
     nadUrl: "https://www.nad.fun/",
     tradeUrl: "https://vlt-token.leverup.xyz",
     summary: "Community vault token distributing mined allocation through volume and P&L competitions.",
@@ -201,6 +204,7 @@ const launchTokens = [
     mineValueUsd: 29_400,
     mineEpoch: "Epoch 15",
     epochEndsIn: "6d 03h",
+    epochRemainingHours: 147,
     nadUrl: "https://www.nad.fun/",
     tradeUrl: "https://orbt-token.leverup.xyz",
     summary: "Desk token running a focused Trade to Mine pool for volume and P&L contributors.",
@@ -283,6 +287,17 @@ function tokenById(id) {
   return launchTokens.find((token) => token.id === id) || launchTokens[0];
 }
 
+function sortedMineTokens() {
+  const tokens = launchTokens.filter((token) => token.status === "Launched");
+  const sorters = {
+    yield: (a, b) => b.mineValueUsd - a.mineValueUsd,
+    time: (a, b) => (a.epochRemainingHours || 0) - (b.epochRemainingHours || 0),
+    mc: (a, b) => b.marketCapUsd - a.marketCapUsd,
+  };
+
+  return [...tokens].sort(sorters[launchState.mineSort] || sorters.yield);
+}
+
 function renderDashboardCard(token, mode) {
   const progress = tokenProgress(token);
   const remaining = tokenRemaining(token);
@@ -312,27 +327,33 @@ function renderDashboardCard(token, mode) {
   }
 
   return `
-    <article class="dash-card mine">
-      <div class="launch-card-head">
-        <div class="token-title">
-          <span class="token-mark">${escapeHtml(token.ticker.slice(0, 1))}</span>
-          <div>
-            <strong>${escapeHtml(token.name)}</strong>
-            <span>$${escapeHtml(token.ticker)} · ${escapeHtml(token.mineEpoch)}</span>
-          </div>
+    <article class="mine-row">
+      <div class="token-title compact-token">
+        <span class="token-mark">${escapeHtml(token.ticker.slice(0, 1))}</span>
+        <div>
+          <strong>${escapeHtml(token.name)}</strong>
+          <span>$${escapeHtml(token.ticker)} · ${escapeHtml(token.mineEpoch)}</span>
         </div>
       </div>
-      <div class="mine-split">
-        <div><span>Weekly Pool</span><strong>${formatTokenExact(token.mineTokens, escapeHtml(token.ticker))}</strong></div>
-        <div><span>Value</span><strong>${formatUsdExact(token.mineValueUsd)}</strong></div>
+      <div class="row-metric">
+        <span>Pool</span>
+        <strong>${formatTokenExact(token.mineTokens, escapeHtml(token.ticker))}</strong>
       </div>
-      <div class="dash-footer">
-        <span>Epoch ends in ${escapeHtml(token.epochEndsIn || "4d")}</span>
-        <strong>Market Cap ${formatUsdExact(token.marketCapUsd)}</strong>
+      <div class="row-metric">
+        <span>Value</span>
+        <strong>${formatUsdExact(token.mineValueUsd)}</strong>
       </div>
-      <div class="dash-actions">
+      <div class="row-metric">
+        <span>Ends</span>
+        <strong>${escapeHtml(token.epochEndsIn || "4d")}</strong>
+      </div>
+      <div class="row-metric">
+        <span>MC</span>
+        <strong>${formatUsdExact(token.marketCapUsd)}</strong>
+      </div>
+      <div class="row-actions">
         <a href="#/launch/${token.id}">Detail</a>
-        <a class="external" href="${escapeHtml(token.tradeUrl)}" target="_blank" rel="noreferrer">Trade</a>
+        <a href="${escapeHtml(token.tradeUrl)}" target="_blank" rel="noreferrer">Trade</a>
       </div>
     </article>
   `;
@@ -340,12 +361,14 @@ function renderDashboardCard(token, mode) {
 
 function renderLaunchDashboard() {
   if (!refs.liveDashboard || !refs.mineDashboard) return;
+  document.querySelectorAll("[data-mine-sort]").forEach((button) => {
+    button.classList.toggle("active", button.dataset.mineSort === launchState.mineSort);
+  });
   refs.liveDashboard.innerHTML = launchTokens
     .filter((token) => token.status === "Live")
     .map((token) => renderDashboardCard(token, "live"))
     .join("");
-  refs.mineDashboard.innerHTML = launchTokens
-    .filter((token) => token.status === "Launched")
+  refs.mineDashboard.innerHTML = sortedMineTokens()
     .map((token) => renderDashboardCard(token, "mine"))
     .join("");
 }
@@ -944,6 +967,13 @@ refs.launchDetail.addEventListener("click", (event) => {
     renderLaunchDetail(token.id);
     renderLaunchDashboard();
   }
+});
+
+document.querySelectorAll("[data-mine-sort]").forEach((button) => {
+  button.addEventListener("click", () => {
+    launchState.mineSort = button.dataset.mineSort;
+    renderLaunchDashboard();
+  });
 });
 
 window.addEventListener("DOMContentLoaded", () => {
