@@ -51,8 +51,34 @@
         </a>
       </section>
 
+      <section class="dashboard-grid">
+        <section class="panel dashboard-panel">
+          <div class="panel-head compact">
+            <div>
+              <h2>Live Raises</h2>
+              <p>Active ICOs. Funds can exit before target fill.</p>
+            </div>
+          </div>
+          <div id="liveDashboard" class="dashboard-list"></div>
+        </section>
+
+        <section class="panel dashboard-panel">
+          <div class="panel-head compact">
+            <div>
+              <h2>Trade to Mine</h2>
+              <p>Launched tokens distributing Community allocation through weekly mining.</p>
+            </div>
+          </div>
+          <div id="mineDashboard" class="dashboard-list"></div>
+        </section>
+      </section>
+
       <section class="launch-board">
         <div class="list-toolbar">
+          <div>
+            <h2>All Launches</h2>
+            <p>Search and filter the full launch set.</p>
+          </div>
           <div class="filter-tabs" role="group" aria-label="Launch status filter">
             <button class="active" type="button" data-filter="Live">Live</button>
             <button type="button" data-filter="Launched">Launched</button>

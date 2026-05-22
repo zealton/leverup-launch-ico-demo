@@ -218,17 +218,119 @@ button {
   background: rgba(19, 21, 20, 0.96);
 }
 
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.dashboard-panel {
+  min-width: 0;
+}
+
+.dashboard-list {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  max-height: 520px;
+  overflow: auto;
+}
+
+.dash-card {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding: 13px;
+  border: 1px solid var(--border-default);
+  border-radius: 6px;
+  background: var(--bg-surface-1);
+  color: inherit;
+  text-decoration: none;
+}
+
+.dash-card:hover {
+  border-color: var(--border-strong);
+  background: var(--bg-surface-2);
+}
+
+.compact-metrics {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.mine-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.mine-split div {
+  padding: 10px;
+  border: 1px solid var(--border-default);
+  border-radius: 4px;
+  background: var(--bg-panel);
+}
+
+.mine-split span {
+  display: block;
+  color: var(--text-subtle);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.mine-split strong {
+  display: block;
+  margin-top: 4px;
+  color: var(--accent-long);
+  font-family: var(--font-mono);
+}
+
+.split-bar {
+  display: flex;
+  height: 28px;
+  overflow: hidden;
+  border: 1px solid var(--border-default);
+  border-radius: 4px;
+}
+
+.split-bar span {
+  display: grid;
+  place-items: center;
+  color: #0b0b0b;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.split-bar span:first-child {
+  background: var(--accent-long);
+}
+
+.split-bar span:last-child {
+  background: var(--liquidity);
+}
+
 .list-toolbar {
   position: sticky;
   top: 64px;
   z-index: 4;
   display: grid;
-  grid-template-columns: auto minmax(280px, 420px);
+  grid-template-columns: 1fr auto minmax(280px, 420px);
   gap: 12px;
   align-items: center;
   padding: 14px;
   border-bottom: 1px solid var(--border-default);
   background: rgba(19, 21, 20, 0.96);
+}
+
+.list-toolbar h2,
+.list-toolbar p {
+  margin: 0;
+}
+
+.list-toolbar p {
+  margin-top: 3px;
+  color: var(--text-muted);
 }
 
 .filter-tabs {
@@ -554,7 +656,6 @@ button {
   padding: 14px;
 }
 
-.launched-meta,
 .launched-summary {
   padding: 10px 12px;
   border: 1px solid var(--border-default);
@@ -588,8 +689,7 @@ button {
 }
 
 .trade-mine-hero span,
-.trade-mine-hero small,
-.mining-mode span {
+.trade-mine-hero small {
   color: var(--text-muted);
 }
 
@@ -611,28 +711,78 @@ button {
 
 .trade-mine-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 8px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
   padding: 14px;
 }
 
-.mining-mode {
+.mining-rule-card {
   display: grid;
   gap: 12px;
-  margin: 0 14px 14px;
   padding: 12px;
   border: 1px solid var(--border-default);
   border-radius: 6px;
   background: var(--bg-surface-1);
 }
 
-.mining-mode div:first-child {
+.rule-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.rule-head span {
+  color: var(--text-muted);
+  font-weight: 700;
+}
+
+.rule-head strong {
+  color: var(--accent-long);
+  font-family: var(--font-display);
+  font-size: 26px;
+}
+
+.rule-pool {
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.mining-rule-card p {
+  margin: 0;
+  color: var(--text-muted);
+}
+
+.rule-lines {
   display: grid;
-  gap: 5px;
+  gap: 6px;
+}
+
+.rule-lines div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--border-default);
+}
+
+.rule-lines div:last-child {
+  border-bottom: 0;
+}
+
+.rule-lines span {
+  color: var(--text-subtle);
+}
+
+.rule-lines strong {
+  font-family: var(--font-mono);
+  text-align: right;
 }
 
 .leaderboard-mini {
-  padding: 0 14px 14px;
+  display: grid;
+  gap: 0;
 }
 
 .tx-list {
@@ -1453,6 +1603,10 @@ input[type="range"] {
     grid-template-columns: 1fr;
   }
 
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+
   .preview-rail {
     position: static;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1492,7 +1646,8 @@ input[type="range"] {
   .link-grid,
   .preview-rail,
   .launch-list,
-  .list-toolbar {
+  .list-toolbar,
+  .trade-mine-grid {
     grid-template-columns: 1fr;
   }
 

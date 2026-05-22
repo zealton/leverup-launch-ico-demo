@@ -78,6 +78,8 @@ const refs = {
   launchList: $("launchList"),
   launchDetail: $("launchDetail"),
   launchSearch: $("launchSearch"),
+  liveDashboard: $("liveDashboard"),
+  mineDashboard: $("mineDashboard"),
 };
 
 const launchState = {
@@ -248,8 +250,77 @@ function tokenById(id) {
   return launchTokens.find((token) => token.id === id) || launchTokens[0];
 }
 
+function renderDashboardCard(token, mode) {
+  const progress = tokenProgress(token);
+  const remaining = tokenRemaining(token);
+  if (mode === "live") {
+    return `
+      <a class="dash-card" href="#/launch/${token.id}">
+        <div class="launch-card-head">
+          <div class="token-title">
+            <span class="token-mark">${escapeHtml(token.ticker.slice(0, 1))}</span>
+            <div>
+              <strong>${escapeHtml(token.name)}</strong>
+              <span>$${escapeHtml(token.ticker)}</span>
+            </div>
+          </div>
+          <span class="status-chip live">Live</span>
+        </div>
+        <div class="progress-block">
+          <div class="progress-label"><span>${formatCompact(token.raisedMon)} / ${formatCompact(token.targetMon)} MON</span><strong>${progress.toFixed(1)}%</strong></div>
+          <div class="progress-track"><span style="width:${progress}%"></span></div>
+        </div>
+        <div class="card-metrics compact-metrics">
+          <div class="mini-metric"><span>Remaining</span><strong>${formatCompact(remaining)} MON</strong></div>
+          <div class="mini-metric"><span>Your Entry</span><strong>${formatCompact(token.userContributionMon)} MON</strong></div>
+        </div>
+      </a>
+    `;
+  }
+
+  return `
+    <a class="dash-card mine" href="#/launch/${token.id}">
+      <div class="launch-card-head">
+        <div class="token-title">
+          <span class="token-mark">${escapeHtml(token.ticker.slice(0, 1))}</span>
+          <div>
+            <strong>${escapeHtml(token.name)}</strong>
+            <span>$${escapeHtml(token.ticker)} · ${escapeHtml(token.mineEpoch)}</span>
+          </div>
+        </div>
+        <span class="status-chip launched">Launched</span>
+      </div>
+      <div class="mine-split">
+        <div><span>Weekly Pool</span><strong>${formatCompact(token.mineTokens)} ${escapeHtml(token.ticker)}</strong></div>
+        <div><span>Mine Value</span><strong>${formatCompact(token.mineValueUsd, "$")}</strong></div>
+      </div>
+      <div class="split-bar">
+        <span style="width:70%">Volume 70%</span>
+        <span style="width:30%">P&L 30%</span>
+      </div>
+      <div class="card-metrics compact-metrics">
+        <div class="mini-metric"><span>Market Cap</span><strong>${formatCompact(token.marketCapUsd, "$")}</strong></div>
+        <div class="mini-metric"><span>Buyback</span><strong>${formatCompact(token.buybackMon)} MON</strong></div>
+      </div>
+    </a>
+  `;
+}
+
+function renderLaunchDashboard() {
+  if (!refs.liveDashboard || !refs.mineDashboard) return;
+  refs.liveDashboard.innerHTML = launchTokens
+    .filter((token) => token.status === "Live")
+    .map((token) => renderDashboardCard(token, "live"))
+    .join("");
+  refs.mineDashboard.innerHTML = launchTokens
+    .filter((token) => token.status === "Launched")
+    .map((token) => renderDashboardCard(token, "mine"))
+    .join("");
+}
+
 function renderLaunchList() {
   if (!refs.launchList) return;
+  renderLaunchDashboard();
   document.querySelectorAll(".filter-tabs button").forEach((item) => {
     item.classList.toggle("active", item.dataset.filter === launchState.filter);
   });
@@ -283,7 +354,7 @@ function renderLaunchList() {
         </div>
         <div class="progress-track"><span style="width:${progress}%"></span></div>
       </div>
-    ` : `<div class="launched-meta">Launch complete · Trade to Mine active</div>`;
+    ` : "";
 
     return `
       <a class="launch-card" href="#/launch/${token.id}">
@@ -371,24 +442,41 @@ function renderLaunchDetail(id) {
         <button type="button">Trade with ${escapeHtml(token.ticker)} as collateral</button>
       </div>
       <div class="trade-mine-grid">
-        <article class="mini-metric"><span>Volume Share</span><strong>${formatCompact(token.mineTokens * 0.7)} ${escapeHtml(token.ticker)}</strong><small>70% of pool</small></article>
-        <article class="mini-metric"><span>P&L Share</span><strong>${formatCompact(token.mineTokens * 0.3)} ${escapeHtml(token.ticker)}</strong><small>30% of pool</small></article>
-        <article class="mini-metric"><span>Qualified Traders</span><strong>42</strong><small>Min volume $10k</small></article>
-      </div>
-      <div class="mining-mode">
-        <div>
-          <strong>Volume Mining</strong>
-          <span>Cross $10K minimum volume. Past the threshold, rewards distribute pro-rata by qualifying volume.</span>
-        </div>
-        <div class="progress-block">
-          <div class="progress-label"><span>Your volume: $24.82k qualified</span><strong>41.4%</strong></div>
-          <div class="progress-track"><span style="width:41.4%"></span></div>
-        </div>
-      </div>
-      <div class="leaderboard-mini">
-        <div class="tx-row"><span>#1 0xa7c2...8810</span><strong>+$8.42k</strong><span>${formatCompact(token.mineTokens * 0.087)} ${escapeHtml(token.ticker)}</span></div>
-        <div class="tx-row"><span>#2 0x3e09...2bf1</span><strong>+$5.64k</strong><span>${formatCompact(token.mineTokens * 0.058)} ${escapeHtml(token.ticker)}</span></div>
-        <div class="tx-row"><span>#3 0xd421...77ab</span><strong>+$4.21k</strong><span>${formatCompact(token.mineTokens * 0.044)} ${escapeHtml(token.ticker)}</span></div>
+        <article class="mining-rule-card">
+          <div class="rule-head">
+            <span>Volume</span>
+            <strong>70%</strong>
+          </div>
+          <div class="rule-pool">${formatCompact(token.mineTokens * 0.7)} ${escapeHtml(token.ticker)}</div>
+          <p>All qualifying traders split this pool pro-rata by qualifying trading volume.</p>
+          <div class="rule-lines">
+            <div><span>Eligibility</span><strong>Trade volume counted up to 100x</strong></div>
+            <div><span>Your qualified volume</span><strong>$24.82k</strong></div>
+            <div><span>Total qualified volume</span><strong>$1.42M</strong></div>
+          </div>
+          <div class="progress-block">
+            <div class="progress-label"><span>Your share estimate</span><strong>1.75%</strong></div>
+            <div class="progress-track"><span style="width:35%"></span></div>
+          </div>
+        </article>
+        <article class="mining-rule-card">
+          <div class="rule-head">
+            <span>P&L</span>
+            <strong>30%</strong>
+          </div>
+          <div class="rule-pool">${formatCompact(token.mineTokens * 0.3)} ${escapeHtml(token.ticker)}</div>
+          <p>Only top 10 positive P&L traders share this pool by their P&L weight.</p>
+          <div class="rule-lines">
+            <div><span>Your P&L rank</span><strong>#14</strong></div>
+            <div><span>Cutoff P&L</span><strong>+$870</strong></div>
+            <div><span>Your P&L</span><strong>+$680</strong></div>
+          </div>
+          <div class="leaderboard-mini">
+            <div class="tx-row"><span>#1 0xa7c2...8810</span><strong>+$8.42k</strong><span>${formatCompact(token.mineTokens * 0.087)} ${escapeHtml(token.ticker)}</span></div>
+            <div class="tx-row"><span>#2 0x3e09...2bf1</span><strong>+$5.64k</strong><span>${formatCompact(token.mineTokens * 0.058)} ${escapeHtml(token.ticker)}</span></div>
+            <div class="tx-row"><span>#3 0xd421...77ab</span><strong>+$4.21k</strong><span>${formatCompact(token.mineTokens * 0.044)} ${escapeHtml(token.ticker)}</span></div>
+          </div>
+        </article>
       </div>
     </section>
   ` : "";
