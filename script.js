@@ -680,17 +680,20 @@ function renderLaunchDetail(id) {
         </div>
       </section>
   ` : `
-      <section class="panel">
-        <div class="panel-head compact">
+      <section class="panel market-summary-panel">
+        <div class="market-summary">
           <div>
-            <h2>Market</h2>
-            <p>Post-launch market and buyback snapshot.</p>
+            <span>Market Cap</span>
+            <strong>${formatUsdExact(token.marketCapUsd)}</strong>
           </div>
-        </div>
-        <div class="summary-grid launched-stats">
-          <article class="stat-card"><span>Market Cap</span><strong>${formatUsdExact(token.marketCapUsd)}</strong><small>Synced app estimate</small></article>
-          <article class="stat-card"><span>Total Buyback</span><strong>${formatMonExact(token.buybackMon)}</strong><small>Protocol buyback total</small></article>
-          <article class="stat-card"><span>Mine Pool</span><strong>${formatTokenExact(token.mineTokens, escapeHtml(token.ticker))}</strong><small>${escapeHtml(token.mineEpoch)}</small></article>
+          <div>
+            <span>Buyback</span>
+            <strong>${formatMonExact(token.buybackMon)}</strong>
+          </div>
+          <div>
+            <span>${escapeHtml(token.mineEpoch)} Pool</span>
+            <strong>${formatTokenExact(token.mineTokens, escapeHtml(token.ticker))}</strong>
+          </div>
         </div>
       </section>
   `;
