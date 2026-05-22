@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 420" role="img" aria-labelledby="title desc">
+  <title id="title">Mushroom launch campaign visual</title>
+  <desc id="desc">Abstract neon launch scene for a community token.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#101212"/>
+      <stop offset="1" stop-color="#20280d"/>
+    </linearGradient>
+    <linearGradient id="cap" x1="0" x2="1">
+      <stop offset="0" stop-color="#c7f50d"/>
+      <stop offset="1" stop-color="#fa5000"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#bg)"/>
+  <g opacity=".18" stroke="#c7f50d" stroke-width="1">
+    <path d="M0 70h1200M0 140h1200M0 210h1200M0 280h1200M0 350h1200"/>
+    <path d="M100 0v420M220 0v420M340 0v420M460 0v420M580 0v420M700 0v420M820 0v420M940 0v420M1060 0v420"/>
+  </g>
+  <circle cx="930" cy="120" r="120" fill="#c7f50d" opacity=".12"/>
+  <circle cx="1020" cy="240" r="170" fill="#fa5000" opacity=".10"/>
+  <g transform="translate(160 70)">
+    <path d="M95 220c0-85 70-155 155-155s155 70 155 155H95Z" fill="url(#cap)"/>
+    <rect x="205" y="185" width="90" height="135" rx="42" fill="#f2f2e8"/>
+    <circle cx="174" cy="160" r="22" fill="#101212" opacity=".52"/>
+    <circle cx="256" cy="118" r="26" fill="#101212" opacity=".42"/>
+    <circle cx="333" cy="170" r="18" fill="#101212" opacity=".38"/>
+  </g>
+  <g fill="#f5f5f5">
+    <text x="620" y="165" font-family="Inter, Arial, sans-serif" font-size="54" font-weight="800">MUSHROOM</text>
+    <text x="620" y="220" font-family="IBM Plex Mono, monospace" font-size="24" fill="#c7f50d">LIVE ICO · COMMUNITY REWARDS</text>
+    <text x="620" y="270" font-family="Inter, Arial, sans-serif" font-size="22" fill="#c9cbc7">Creator quests, removable capital, and weekly Trade to Mine allocation.</text>
+  </g>
+</svg>

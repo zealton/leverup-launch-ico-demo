@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 420" role="img" aria-labelledby="title desc">
+  <title id="title">Byte Forge builder infrastructure visual</title>
+  <desc id="desc">Abstract technical grid for a builder token.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#0f1114"/>
+      <stop offset="1" stop-color="#132329"/>
+    </linearGradient>
+    <linearGradient id="chip" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#14d5ff"/>
+      <stop offset="1" stop-color="#c7f50d"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#bg)"/>
+  <g opacity=".18" stroke="#14d5ff" stroke-width="1">
+    <path d="M0 60h1200M0 120h1200M0 180h1200M0 240h1200M0 300h1200M0 360h1200"/>
+    <path d="M80 0v420M160 0v420M240 0v420M320 0v420M400 0v420M480 0v420M560 0v420M640 0v420M720 0v420M800 0v420M880 0v420M960 0v420M1040 0v420M1120 0v420"/>
+  </g>
+  <g transform="translate(150 92)">
+    <rect x="40" y="40" width="250" height="220" rx="28" fill="#111314" stroke="url(#chip)" stroke-width="8"/>
+    <g stroke="#c7f50d" stroke-width="10" stroke-linecap="round">
+      <path d="M20 85H0M20 130H0M20 175H0M20 220H0M330 85h-20M330 130h-20M330 175h-20M330 220h-20"/>
+      <path d="M88 20V0M133 20V0M178 20V0M223 20V0M88 300v-20M133 300v-20M178 300v-20M223 300v-20"/>
+    </g>
+    <path d="M105 150h48l24-44 44 100 30-56h45" fill="none" stroke="#14d5ff" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <g fill="#f5f5f5">
+    <text x="610" y="165" font-family="Inter, Arial, sans-serif" font-size="54" font-weight="800">BYTE FORGE</text>
+    <text x="610" y="220" font-family="IBM Plex Mono, monospace" font-size="24" fill="#14d5ff">BUILDER TOKEN · LIVE RAISE</text>
+    <text x="610" y="270" font-family="Inter, Arial, sans-serif" font-size="22" fill="#c9cbc7">Developer bounties, dashboards, bot SDKs, and weekly mining programs.</text>
+  </g>
+</svg>

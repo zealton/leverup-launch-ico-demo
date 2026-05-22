@@ -758,7 +758,7 @@ button {
 
 .project-info article {
   display: grid;
-  gap: 6px;
+  gap: 10px;
   padding: 12px;
   border: 1px solid var(--border-default);
   border-radius: 6px;
@@ -771,8 +771,91 @@ button {
   font-weight: 700;
 }
 
-.project-info p {
+.project-info-body {
   color: var(--text-secondary);
+}
+
+.project-info-body > *:first-child {
+  margin-top: 0;
+}
+
+.project-info-body > *:last-child {
+  margin-bottom: 0;
+}
+
+.project-info-body img {
+  display: block;
+  width: 100%;
+  max-height: 220px;
+  object-fit: cover;
+  border: 1px solid var(--border-default);
+  border-radius: 6px;
+}
+
+.project-info-body h3 {
+  margin: 10px 0 6px;
+  color: var(--text-primary);
+  font-size: 15px;
+}
+
+.project-info-body p,
+.project-info-body ul,
+.project-info-body ol,
+.project-info-body blockquote,
+.project-info-body table {
+  margin: 0 0 10px;
+}
+
+.project-info-body ul,
+.project-info-body ol {
+  padding-left: 18px;
+}
+
+.project-info-body li {
+  margin: 4px 0;
+}
+
+.project-info-body strong {
+  color: var(--text-primary);
+}
+
+.project-info-body u {
+  text-decoration-color: var(--accent-long);
+  text-underline-offset: 3px;
+}
+
+.project-info-body a {
+  color: var(--accent-long);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.project-info-body blockquote {
+  padding: 10px 12px;
+  border-left: 3px solid var(--accent-long);
+  border-radius: 4px;
+  background: var(--accent-long-bg);
+  color: var(--text-secondary);
+}
+
+.project-info-body table {
+  width: 100%;
+  border-collapse: collapse;
+  overflow: hidden;
+  font-size: 12px;
+}
+
+.project-info-body th,
+.project-info-body td {
+  padding: 8px;
+  border: 1px solid var(--border-default);
+  text-align: left;
+  vertical-align: top;
+}
+
+.project-info-body th {
+  color: var(--text-primary);
+  background: var(--bg-panel);
 }
 
 .trade-mine-panel {

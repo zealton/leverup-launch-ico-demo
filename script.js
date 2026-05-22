@@ -105,6 +105,43 @@ const launchTokens = [
       how: "ICO funds seed the launch curve. Public Sale receives fixed-cost tokens while Community allocation remains reserved for post-launch mining rewards.",
       roadmap: "Launch, creator quests, Trade to Mine activation, then staking campaign integrations.",
     },
+    detailsHtml: {
+      introduction: `
+        <img src="assets/mushroom-rich.svg" alt="Mushroom launch campaign visual">
+        <h3>Mushroom Launch Brief</h3>
+        <p><strong>Mushroom</strong> is a Monad-native culture token focused on creator quests, weekly trading campaigns, and community-owned meme distribution.</p>
+        <p>The launch is designed for users who want a token with <u>visible funding progress</u>, removable capital before launch, and post-launch mining rewards.</p>
+        <ul>
+          <li><strong>Public Sale:</strong> fixed launch participation before deploy.</li>
+          <li><strong>Liquidity:</strong> seeded after the MON target is fully reached.</li>
+          <li><strong>Community:</strong> reserved for Trade to Mine distribution.</li>
+        </ul>
+      `,
+      how: `
+        <p>ICO funds seed the Nad.Fun curve. When the configured MON target is reached, deployment triggers and withdrawals close.</p>
+        <blockquote><strong>Important:</strong> Before the raise is full, contributors can withdraw. After launch, the token moves into Trade to Mine mode.</blockquote>
+        <ol>
+          <li>Users contribute MON during the live raise.</li>
+          <li>The system tracks wallet, amount, time, and transaction hash.</li>
+          <li>After the target is reached, Community allocation starts weekly mining epochs.</li>
+        </ol>
+        <p>More launch notes can be published on the <a href="https://mush-token.leverup.xyz" target="_blank" rel="noreferrer">MUSH token page</a>.</p>
+      `,
+      roadmap: `
+        <table>
+          <thead><tr><th>Phase</th><th>Milestone</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>01</td><td><strong>ICO raise</strong> and token deploy trigger</td><td>Live</td></tr>
+            <tr><td>02</td><td><u>Creator quest board</u> and first weekly campaign</td><td>Queued</td></tr>
+            <tr><td>03</td><td>Trade to Mine epoch with Volume and P&amp;L pools</td><td>Next</td></tr>
+          </tbody>
+        </table>
+      `,
+      additional: `
+        <p><strong>Additional Details</strong></p>
+        <p><em>Multisig note:</em> campaign treasury actions are mocked here for demo review. Production data should come from contract and indexer state.</p>
+      `,
+    },
     fundingTxs: [
       { wallet: "0x91c4...a330", amountMon: 120_000, time: "May 22, 10:18", tx: "0x91c4a330d4e6b91a889b072cb3a0d2fd2a25ee18f1c4b12a771e9ff1d6caa330" },
       { wallet: "0x6cd4...0a61", amountMon: 86_500, time: "May 22, 09:44", tx: "0x6cd40a61e891b4732f762e9e5d2b03d245ae8b6d4f11c30adf6f847ad1ba0a61" },
@@ -136,6 +173,42 @@ const launchTokens = [
       introduction: "Byte Forge targets builders who want a launch-native reward layer for tools, bots, and hackathon contributions.",
       how: "The Community bucket is reserved for weekly post-launch trading and builder incentive programs.",
       roadmap: "Raise completion, deployment, first mining epoch, then developer bounty seasons.",
+    },
+    detailsHtml: {
+      introduction: `
+        <img src="assets/byte-rich.svg" alt="Byte Forge builder infrastructure visual">
+        <h3>Builder-Focused Token</h3>
+        <p><strong>Byte Forge</strong> targets builders who want a launch-native reward layer for tools, bots, dashboards, and hackathon contributions.</p>
+        <p>Project content can include <u>formatted technical notes</u>, public links, and richer campaign documentation.</p>
+        <ul>
+          <li>Developer tasks and weekly submission rounds.</li>
+          <li>Trading rewards funded by the Community allocation.</li>
+          <li>Public status reporting for raise progress and launch readiness.</li>
+        </ul>
+      `,
+      how: `
+        <p>The Community bucket is reserved for weekly post-launch trading and builder incentive programs.</p>
+        <blockquote>Reward logic should stay readable for traders and builders: simple eligibility, clear epoch timing, and visible pool value.</blockquote>
+        <ol>
+          <li><strong>Raise:</strong> users contribute MON until the configured target fills.</li>
+          <li><strong>Deploy:</strong> contract launch is triggered immediately at full target.</li>
+          <li><strong>Mine:</strong> weekly Volume and P&amp;L campaigns distribute the Community allocation.</li>
+        </ol>
+      `,
+      roadmap: `
+        <table>
+          <thead><tr><th>Quarter</th><th>Delivery</th><th>Owner</th></tr></thead>
+          <tbody>
+            <tr><td>Q1</td><td><strong>Launch tooling</strong> and first reward dashboard</td><td>Core</td></tr>
+            <tr><td>Q2</td><td>Bot SDK, data exports, and <u>public bounty board</u></td><td>Builders</td></tr>
+            <tr><td>Q3</td><td>Cross-project campaign templates</td><td>Community</td></tr>
+          </tbody>
+        </table>
+      `,
+      additional: `
+        <p><strong>Additional Details</strong></p>
+        <p>Website: <a href="https://byte-token.leverup.xyz" target="_blank" rel="noreferrer">byte-token.leverup.xyz</a></p>
+      `,
     },
     fundingTxs: [
       { wallet: "0xa7c2...8810", amountMon: 98_000, time: "May 22, 08:12", tx: "0xa7c288105e69f86b23017147bb13612da9f77af9a3e8d31c141f46fb829a8810" },
@@ -288,6 +361,15 @@ function escapeHtml(value) {
     "\"": "&quot;",
     "'": "&#39;",
   })[char]);
+}
+
+function renderProjectInfoBlock(label, html, fallback) {
+  return `
+    <article>
+      <span>${escapeHtml(label)}</span>
+      <div class="project-info-body">${html || `<p>${escapeHtml(fallback)}</p>`}</div>
+    </article>
+  `;
 }
 
 function tokenProgress(token) {
@@ -646,9 +728,10 @@ function renderLaunchDetail(id) {
           </div>
         </div>
         <div class="project-info">
-          <article><span>Introduction</span><p>${escapeHtml(token.details?.introduction || token.summary)}</p></article>
-          <article><span>How it Works</span><p>${escapeHtml(token.details?.how || "Community allocation is reserved for post-launch programs.")}</p></article>
-          <article><span>Roadmap</span><p>${escapeHtml(token.details?.roadmap || "Launch, mine, and expand trading incentives.")}</p></article>
+          ${renderProjectInfoBlock("Introduction", token.detailsHtml?.introduction, token.details?.introduction || token.summary)}
+          ${renderProjectInfoBlock("How it Works", token.detailsHtml?.how, token.details?.how || "Community allocation is reserved for post-launch programs.")}
+          ${renderProjectInfoBlock("Roadmap", token.detailsHtml?.roadmap, token.details?.roadmap || "Launch, mine, and expand trading incentives.")}
+          ${token.detailsHtml?.additional ? renderProjectInfoBlock("Additional Details", token.detailsHtml.additional, "") : ""}
         </div>
       </section>
   ` : "";
