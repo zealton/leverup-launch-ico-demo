@@ -82,7 +82,7 @@ const refs = {
 
 const launchState = {
   detailMessage: "",
-  mineSort: "yield",
+  mineSort: "value",
 };
 
 const launchTokens = [
@@ -323,12 +323,29 @@ function tokenById(id) {
 function sortedMineTokens() {
   const tokens = launchTokens.filter((token) => token.status === "Launched");
   const sorters = {
-    yield: (a, b) => b.mineValueUsd - a.mineValueUsd,
+    value: (a, b) => b.mineValueUsd - a.mineValueUsd,
     time: (a, b) => (a.epochRemainingHours || 0) - (b.epochRemainingHours || 0),
     mc: (a, b) => b.marketCapUsd - a.marketCapUsd,
   };
 
-  return [...tokens].sort(sorters[launchState.mineSort] || sorters.yield);
+  return [...tokens].sort(sorters[launchState.mineSort] || sorters.value);
+}
+
+function sortLabel(sortKey) {
+  return sortKey === launchState.mineSort ? `${sortKey === "mc" ? "MC" : sortKey[0].toUpperCase() + sortKey.slice(1)} v` : sortKey === "mc" ? "MC" : sortKey[0].toUpperCase() + sortKey.slice(1);
+}
+
+function renderMineHeader() {
+  return `
+    <div class="mine-header">
+      <span>Coin</span>
+      <span>Pool</span>
+      <button type="button" class="${launchState.mineSort === "value" ? "active" : ""}" data-mine-sort="value">${sortLabel("value")}</button>
+      <button type="button" class="${launchState.mineSort === "time" ? "active" : ""}" data-mine-sort="time">${sortLabel("time")}</button>
+      <button type="button" class="${launchState.mineSort === "mc" ? "active" : ""}" data-mine-sort="mc">${sortLabel("mc")}</button>
+      <span>Mine</span>
+    </div>
+  `;
 }
 
 function renderDashboardCard(token, mode) {
@@ -360,7 +377,7 @@ function renderDashboardCard(token, mode) {
   }
 
   return `
-    <article class="mine-row">
+    <article class="mine-row" role="link" tabindex="0" data-detail-href="#/launch/${token.id}" aria-label="Open ${escapeHtml(token.name)} detail">
       <div class="token-title compact-token">
         <span class="token-mark">${escapeHtml(token.ticker.slice(0, 1))}</span>
         <div>
@@ -385,8 +402,7 @@ function renderDashboardCard(token, mode) {
         <strong>${formatUsdExact(token.marketCapUsd)}</strong>
       </div>
       <div class="row-actions">
-        <a href="#/launch/${token.id}">Detail</a>
-        <a href="${escapeHtml(token.tradeUrl)}" target="_blank" rel="noreferrer">Trade</a>
+        <a class="mine-link" href="${escapeHtml(token.tradeUrl)}" target="_blank" rel="noreferrer">Mine</a>
       </div>
     </article>
   `;
@@ -401,7 +417,7 @@ function renderLaunchDashboard() {
     .filter((token) => token.status === "Live")
     .map((token) => renderDashboardCard(token, "live"))
     .join("");
-  refs.mineDashboard.innerHTML = sortedMineTokens()
+  refs.mineDashboard.innerHTML = renderMineHeader() + sortedMineTokens()
     .map((token) => renderDashboardCard(token, "mine"))
     .join("");
 }
@@ -1043,11 +1059,26 @@ refs.launchDetail.addEventListener("click", (event) => {
   }
 });
 
-document.querySelectorAll("[data-mine-sort]").forEach((button) => {
-  button.addEventListener("click", () => {
-    launchState.mineSort = button.dataset.mineSort;
+document.addEventListener("click", (event) => {
+  const sortButton = event.target.closest("[data-mine-sort]");
+  if (sortButton) {
+    launchState.mineSort = sortButton.dataset.mineSort;
     renderLaunchDashboard();
-  });
+    return;
+  }
+
+  if (event.target.closest(".mine-link")) return;
+  const mineRow = event.target.closest(".mine-row[data-detail-href]");
+  if (mineRow) {
+    window.location.hash = mineRow.dataset.detailHref;
+  }
+});
+
+document.addEventListener("keydown", (event) => {
+  const mineRow = event.target.closest?.(".mine-row[data-detail-href]");
+  if (!mineRow || !["Enter", " "].includes(event.key)) return;
+  event.preventDefault();
+  window.location.hash = mineRow.dataset.detailHref;
 });
 
 window.addEventListener("DOMContentLoaded", () => {

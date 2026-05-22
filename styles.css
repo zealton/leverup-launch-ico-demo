@@ -246,6 +246,14 @@ button {
   background: var(--bg-panel);
 }
 
+.sort-tabs span {
+  padding: 0 8px;
+  color: var(--text-subtle);
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
 .sort-tabs button {
   min-width: 44px;
   min-height: 28px;
@@ -351,6 +359,39 @@ button {
   font-family: var(--font-mono);
 }
 
+.mine-header {
+  display: grid;
+  grid-template-columns:
+    minmax(128px, 1.4fr)
+    minmax(116px, 1fr)
+    minmax(74px, 0.58fr)
+    minmax(58px, 0.48fr)
+    minmax(74px, 0.58fr)
+    68px;
+  gap: 8px;
+  align-items: center;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border-default);
+  color: var(--text-subtle);
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.mine-header button {
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  text-transform: uppercase;
+}
+
+.mine-header button.active {
+  color: var(--accent-long);
+}
+
 .mine-row {
   display: grid;
   grid-template-columns:
@@ -365,6 +406,7 @@ button {
   min-width: 0;
   padding: 12px 14px;
   border-bottom: 1px solid var(--border-default);
+  cursor: pointer;
 }
 
 .mine-row:last-child {
@@ -373,6 +415,11 @@ button {
 
 .mine-row:hover {
   background: var(--bg-surface-1);
+}
+
+.mine-row:focus-visible {
+  outline: 1px solid var(--accent-long);
+  outline-offset: -1px;
 }
 
 .compact-token .token-mark {
@@ -413,14 +460,24 @@ button {
 }
 
 .row-actions a {
-  color: var(--text-muted);
+  display: inline-flex;
+  gap: 5px;
+  align-items: center;
+  color: var(--accent-long);
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 800;
   text-decoration: none;
 }
 
+.row-actions a::after {
+  display: block;
+  content: "↗";
+  font-size: 11px;
+  line-height: 1;
+}
+
 .row-actions a:hover {
-  color: var(--accent-long);
+  color: var(--accent-long-strong);
 }
 
 .launch-card {
@@ -1836,6 +1893,10 @@ input[type="range"] {
 
   .mine-row {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  .mine-header {
+    display: none;
   }
 
   .funding-row {
