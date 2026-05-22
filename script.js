@@ -75,16 +75,12 @@ const refs = {
   launchListPage: $("launchListPage"),
   launchDetailPage: $("launchDetailPage"),
   createPage: $("createPage"),
-  launchList: $("launchList"),
   launchDetail: $("launchDetail"),
-  launchSearch: $("launchSearch"),
   liveDashboard: $("liveDashboard"),
   mineDashboard: $("mineDashboard"),
 };
 
 const launchState = {
-  filter: "Live",
-  search: "",
   detailMessage: "",
 };
 
@@ -270,9 +266,9 @@ function renderDashboardCard(token, mode) {
           <div class="progress-label"><span>${formatCompact(token.raisedMon)} / ${formatCompact(token.targetMon)} MON</span><strong>${progress.toFixed(1)}%</strong></div>
           <div class="progress-track"><span style="width:${progress}%"></span></div>
         </div>
-        <div class="card-metrics compact-metrics">
-          <div class="mini-metric"><span>Remaining</span><strong>${formatCompact(remaining)} MON</strong></div>
-          <div class="mini-metric"><span>Your Entry</span><strong>${formatCompact(token.userContributionMon)} MON</strong></div>
+        <div class="dash-footer">
+          <span>Remaining ${formatCompact(remaining)} MON</span>
+          <strong>${token.userContributionMon > 0 ? `${formatCompact(token.userContributionMon)} MON entered` : "No entry"}</strong>
         </div>
       </a>
     `;
@@ -292,15 +288,11 @@ function renderDashboardCard(token, mode) {
       </div>
       <div class="mine-split">
         <div><span>Weekly Pool</span><strong>${formatCompact(token.mineTokens)} ${escapeHtml(token.ticker)}</strong></div>
-        <div><span>Mine Value</span><strong>${formatCompact(token.mineValueUsd, "$")}</strong></div>
+        <div><span>Value</span><strong>${formatCompact(token.mineValueUsd, "$")}</strong></div>
       </div>
-      <div class="split-bar">
-        <span style="width:70%">Volume 70%</span>
-        <span style="width:30%">P&L 30%</span>
-      </div>
-      <div class="card-metrics compact-metrics">
-        <div class="mini-metric"><span>Market Cap</span><strong>${formatCompact(token.marketCapUsd, "$")}</strong></div>
-        <div class="mini-metric"><span>Buyback</span><strong>${formatCompact(token.buybackMon)} MON</strong></div>
+      <div class="dash-footer">
+        <span>Market Cap ${formatCompact(token.marketCapUsd, "$")}</span>
+        <strong>Open</strong>
       </div>
     </a>
   `;
@@ -316,66 +308,6 @@ function renderLaunchDashboard() {
     .filter((token) => token.status === "Launched")
     .map((token) => renderDashboardCard(token, "mine"))
     .join("");
-}
-
-function renderLaunchList() {
-  if (!refs.launchList) return;
-  renderLaunchDashboard();
-  document.querySelectorAll(".filter-tabs button").forEach((item) => {
-    item.classList.toggle("active", item.dataset.filter === launchState.filter);
-  });
-  const query = launchState.search.trim().toLowerCase();
-  const tokens = launchTokens.filter((token) => {
-    const matchesFilter = token.status === launchState.filter;
-    const haystack = `${token.name} ${token.ticker} ${token.contract}`.toLowerCase();
-    return matchesFilter && (!query || haystack.includes(query));
-  });
-
-  refs.launchList.innerHTML = tokens.map((token) => {
-    const progress = tokenProgress(token);
-    const remaining = tokenRemaining(token);
-    const isLive = token.status === "Live";
-    const liveMetrics = `
-      <div class="mini-metric"><span>Raised</span><strong>${formatCompact(token.raisedMon)} MON</strong></div>
-      <div class="mini-metric"><span>Remaining</span><strong>${formatCompact(remaining)} MON</strong></div>
-      <div class="mini-metric"><span>Your Entry</span><strong>${formatCompact(token.userContributionMon)} MON</strong></div>
-    `;
-    const launchedMetrics = `
-      <div class="mini-metric"><span>Market Cap</span><strong>${formatCompact(token.marketCapUsd, "$")}</strong></div>
-      <div class="mini-metric"><span>Mineable</span><strong>${formatCompact(token.mineTokens)} ${escapeHtml(token.ticker)}</strong></div>
-      <div class="mini-metric"><span>Mine Value</span><strong>${formatCompact(token.mineValueUsd, "$")}</strong></div>
-    `;
-    const statusClass = isLive ? "live" : "launched";
-    const progressHtml = isLive ? `
-      <div class="progress-block">
-        <div class="progress-label">
-          <span>Funding progress</span>
-          <strong>${progress.toFixed(1)}%</strong>
-        </div>
-        <div class="progress-track"><span style="width:${progress}%"></span></div>
-      </div>
-    ` : "";
-
-    return `
-      <a class="launch-card" href="#/launch/${token.id}">
-        <div class="launch-card-head">
-          <div class="token-title">
-            <span class="token-mark">${escapeHtml(token.ticker.slice(0, 1))}</span>
-            <div>
-              <strong>${escapeHtml(token.name)}</strong>
-              <span>$${escapeHtml(token.ticker)} · ${escapeHtml(token.contract)}</span>
-            </div>
-          </div>
-          <span class="status-chip ${statusClass}">${token.status}</span>
-        </div>
-        ${progressHtml}
-        <p class="card-copy">${escapeHtml(token.summary)}</p>
-        <div class="card-metrics">${isLive ? liveMetrics : launchedMetrics}</div>
-      </a>
-    `;
-  }).join("") || `<div class="empty-state">No ${launchState.filter.toLowerCase()} launches match this search.</div>`;
-
-  if (window.lucide) window.lucide.createIcons();
 }
 
 function renderLaunchDetail(id) {
@@ -414,7 +346,7 @@ function renderLaunchDetail(id) {
     <section class="panel">
       <div class="panel-head compact">
         <div>
-          <h2>Trading</h2>
+          <h2>Swap</h2>
           <p>Open the live Nad.Fun market for this launched token.</p>
         </div>
       </div>
@@ -489,6 +421,46 @@ function renderLaunchDetail(id) {
     </div>
   `).join("") || `<div class="tx-row"><span>No buyback transactions yet.</span><strong>0 MON</strong><span>Pending</span></div>`;
 
+  const fundingPanel = isLive ? `
+      <section class="panel">
+        <div class="panel-head compact">
+          <div>
+            <h2>Funding</h2>
+            <p>Launch succeeds only when the configured MON target is fully filled.</p>
+          </div>
+        </div>
+        <div class="range-block">
+          <div class="progress-block">
+            <div class="progress-label">
+              <span>${formatCompact(token.raisedMon)} / ${formatCompact(token.targetMon)} MON</span>
+              <strong>${progress.toFixed(2)}%</strong>
+            </div>
+            <div class="progress-track"><span style="width:${progress}%"></span></div>
+          </div>
+        </div>
+        <div class="summary-grid">
+          <article class="stat-card"><span>Remaining Capacity</span><strong>${formatCompact(remaining)} MON</strong><small>Before deploy trigger</small></article>
+          <article class="stat-card"><span>Your Contribution</span><strong>${formatCompact(token.userContributionMon)} MON</strong><small>Can exit before target</small></article>
+          <article class="stat-card"><span>Market Cap</span><strong>${formatCompact(token.marketCapUsd, "$")}</strong><small>Synced app estimate</small></article>
+          <article class="stat-card"><span>Total Buyback</span><strong>${formatCompact(token.buybackMon)} MON</strong><small>Protocol buyback total</small></article>
+        </div>
+      </section>
+  ` : `
+      <section class="panel">
+        <div class="panel-head compact">
+          <div>
+            <h2>Market</h2>
+            <p>Post-launch market and buyback snapshot.</p>
+          </div>
+        </div>
+        <div class="summary-grid launched-stats">
+          <article class="stat-card"><span>Market Cap</span><strong>${formatCompact(token.marketCapUsd, "$")}</strong><small>Synced app estimate</small></article>
+          <article class="stat-card"><span>Total Buyback</span><strong>${formatCompact(token.buybackMon)} MON</strong><small>Protocol buyback total</small></article>
+          <article class="stat-card"><span>Mine Pool</span><strong>${formatCompact(token.mineTokens)} ${escapeHtml(token.ticker)}</strong><small>${escapeHtml(token.mineEpoch)}</small></article>
+        </div>
+      </section>
+  `;
+
   refs.launchDetail.innerHTML = `
     <div class="detail-main">
       <section class="detail-title">
@@ -505,29 +477,7 @@ function renderLaunchDetail(id) {
         <p>${escapeHtml(token.summary)}</p>
       </section>
 
-      <section class="panel">
-        <div class="panel-head compact">
-          <div>
-            <h2>Funding</h2>
-            <p>${isLive ? "Launch succeeds only when the configured MON target is fully filled." : "Configured MON target has been filled and deploy has completed."}</p>
-          </div>
-        </div>
-        ${isLive ? `<div class="range-block">
-          <div class="progress-block">
-            <div class="progress-label">
-              <span>${formatCompact(token.raisedMon)} / ${formatCompact(token.targetMon)} MON</span>
-              <strong>${progress.toFixed(2)}%</strong>
-            </div>
-            <div class="progress-track"><span style="width:${progress}%"></span></div>
-          </div>
-        </div>` : `<div class="launched-summary">Target filled · ${formatCompact(token.targetMon)} MON deployed through launch flow</div>`}
-        <div class="summary-grid">
-          <article class="stat-card"><span>Remaining Capacity</span><strong>${formatCompact(remaining)} MON</strong><small>Before deploy trigger</small></article>
-          <article class="stat-card"><span>Your Contribution</span><strong>${formatCompact(token.userContributionMon)} MON</strong><small>${isLive ? "Can exit before target" : "Locked after launch"}</small></article>
-          <article class="stat-card"><span>Market Cap</span><strong>${formatCompact(token.marketCapUsd, "$")}</strong><small>Synced app estimate</small></article>
-          <article class="stat-card"><span>Total Buyback</span><strong>${formatCompact(token.buybackMon)} MON</strong><small>Protocol buyback total</small></article>
-        </div>
-      </section>
+      ${fundingPanel}
 
       ${message}
 
@@ -587,7 +537,7 @@ function showRoute() {
     renderLaunchDetail(hash.split("/")[2]);
   } else {
     refs.launchListPage.hidden = false;
-    renderLaunchList();
+    renderLaunchDashboard();
   }
 }
 
@@ -863,21 +813,6 @@ refs.blockType.addEventListener("change", (event) => {
   document.execCommand("formatBlock", false, event.target.value);
 });
 
-document.querySelectorAll(".filter-tabs button").forEach((button) => {
-  button.addEventListener("click", () => {
-    launchState.filter = button.dataset.filter;
-    document.querySelectorAll(".filter-tabs button").forEach((item) => {
-      item.classList.toggle("active", item === button);
-    });
-    renderLaunchList();
-  });
-});
-
-refs.launchSearch.addEventListener("input", (event) => {
-  launchState.search = event.target.value;
-  renderLaunchList();
-});
-
 refs.launchDetail.addEventListener("click", (event) => {
   const actionTarget = event.target.closest("[data-action]");
   if (!actionTarget) return;
@@ -903,7 +838,7 @@ refs.launchDetail.addEventListener("click", (event) => {
       launchState.detailMessage = `Invested ${formatCompact(amount)} MON into ${token.name}.`;
     }
     renderLaunchDetail(token.id);
-    renderLaunchList();
+    renderLaunchDashboard();
   }
 
   if (action === "exit" && token.status === "Live" && token.userContributionMon > 0) {
