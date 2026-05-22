@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LeverUp Launch ICO Demo</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://unpkg.com/lucide@latest" defer></script>
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#" aria-label="LeverUp">
+      <img src="assets/leverup-logo.svg" alt="LeverUp">
+    </a>
+    <nav class="main-nav" aria-label="Primary">
+      <a class="active" href="https://app.leverup.xyz/" target="_blank" rel="noreferrer">Trade</a>
+      <a href="https://app.leverup.xyz/" target="_blank" rel="noreferrer">LVUSD</a>
+      <a href="https://app.leverup.xyz/" target="_blank" rel="noreferrer">LVMON</a>
+      <a href="https://leverup-earn-deploy.vercel.app/" target="_blank" rel="noreferrer">Earn</a>
+      <a href="https://app.leverup.xyz/" target="_blank" rel="noreferrer">Genesis Airdrop</a>
+      <a href="https://app.leverup.xyz/competition" target="_blank" rel="noreferrer">Competition</a>
+      <button class="nav-more" type="button">More <i data-lucide="chevron-down"></i></button>
+    </nav>
+    <div class="top-actions">
+      <a class="bridge-btn" href="https://app.leverup.xyz/" target="_blank" rel="noreferrer">
+        <i data-lucide="smartphone"></i>
+        Bridge
+      </a>
+      <button class="connect-btn" type="button">
+        <i data-lucide="wallet"></i>
+        Connect
+      </button>
+      <button class="network-btn" type="button" aria-label="Network">
+        <i data-lucide="hexagon"></i>
+      </button>
+    </div>
+  </header>
+
+  <main class="shell">
+    <section id="launchListPage" class="route-page">
+      <section class="page-head">
+        <div>
+          <div class="eyebrow">Launch / ICO Board</div>
+          <h1>Launch Market</h1>
+          <p>Track live token raises, enter or exit active ICOs, and find ended launches ready for Trade to Mine.</p>
+        </div>
+        <a class="primary-link" href="#/create">
+          <i data-lucide="rocket"></i>
+          Create Token
+        </a>
+      </section>
+
+      <section class="launch-board">
+        <div class="list-toolbar">
+          <div class="filter-tabs" role="group" aria-label="Launch status filter">
+            <button class="active" type="button" data-filter="Live">Live</button>
+            <button type="button" data-filter="Ended">Ended</button>
+          </div>
+          <label class="search-box">
+            <i data-lucide="search"></i>
+            <input id="launchSearch" type="search" placeholder="Search project, ticker, or contract">
+          </label>
+        </div>
+        <div id="launchList" class="launch-list" aria-live="polite"></div>
+      </section>
+    </section>
+
+    <section id="launchDetailPage" class="route-page" hidden>
+      <a class="back-link" href="#/launch">
+        <i data-lucide="arrow-left"></i>
+        Back to Launch Market
+      </a>
+      <div id="launchDetail" class="detail-shell"></div>
+    </section>
+
+    <section id="createPage" class="route-page" hidden>
+    <section class="page-head">
+      <div>
+        <div class="eyebrow">Launch / Deploy Token</div>
+        <h1>Token Launch ICO</h1>
+        <p>Configure token metadata, ICO raise, Nad.Fun curve allocation, and optional project details in one launch ticket.</p>
+      </div>
+      <div class="launch-state">
+        <span>Draft</span>
+        <strong id="graduationBadge">Graduated</strong>
+      </div>
+    </section>
+
+    <section class="workspace">
+      <div class="stack">
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <h2>Required Setup</h2>
+              <p>Token identity and launch ticket basics.</p>
+            </div>
+            <span class="panel-index">01</span>
+          </div>
+
+          <div class="identity-grid">
+            <label class="upload-card" for="tokenPicture">
+              <input id="tokenPicture" type="file" accept="image/*">
+              <span class="token-avatar">
+                <img id="tokenPreview" alt="">
+                <i data-lucide="image-plus"></i>
+              </span>
+              <span class="upload-copy">
+                <strong>Token Picture</strong>
+                <small>PNG, JPG, or WEBP</small>
+              </span>
+              <i data-lucide="upload"></i>
+            </label>
+
+            <div class="field-grid">
+              <label class="field">
+                <span>Project Name</span>
+                <input id="projectName" type="text" placeholder="Project name" autocomplete="off">
+              </label>
+              <label class="field">
+                <span>Ticker</span>
+                <div class="prefixed-input">
+                  <strong>$</strong>
+                  <input id="ticker" type="text" placeholder="Ticker" autocomplete="off" maxlength="12">
+                </div>
+              </label>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <h2>Tokenomics</h2>
+              <p>Raise is configured in MON. USD equivalent can be toggled in the raise panel.</p>
+            </div>
+            <span class="panel-index">02</span>
+          </div>
+
+          <div class="tokenomics-controls">
+            <div class="display-toggle">
+              <span>Raise Display</span>
+              <div class="segmented" role="group" aria-label="Raise display">
+                <button id="unitLvmon" class="active" type="button" data-unit="MON">MON</button>
+                <button id="unitUsd" type="button" data-unit="USD">USD Value</button>
+              </div>
+            </div>
+
+            <label class="field price-field">
+              <span>MON-USD Price</span>
+              <div class="input-action">
+                <input id="monPrice" type="number" min="0.0001" step="0.0001" value="0.03">
+                <button id="refreshPrice" type="button" aria-label="Refresh MON price">
+                  <i data-lucide="refresh-cw"></i>
+                </button>
+              </div>
+              <small id="priceMeta">Fallback price loaded.</small>
+            </label>
+
+            <label class="field raise-field">
+              <span>ICO Raise Amount</span>
+              <div class="amount-input">
+                <input id="raiseInput" type="number" step="10000" value="230000">
+                <strong id="raiseSuffix">MON</strong>
+              </div>
+              <small id="floorLabel">Minimum: 230,000 MON graduation threshold. No hard maximum.</small>
+              <div id="raiseEquivalent" class="raise-equivalent" hidden></div>
+            </label>
+          </div>
+
+          <div class="range-block">
+            <input id="raiseRange" type="range" min="230000" max="15000000" step="10000" value="230000">
+            <div class="range-meta">
+              <span id="rangeMin">230k MON</span>
+              <span id="rangeMax">15M MON+</span>
+            </div>
+          </div>
+
+          <div class="summary-grid">
+            <article class="stat-card success">
+              <span>Curve Status</span>
+              <strong id="statusValue">Graduated</strong>
+              <small id="statusMeta">Curve 229.59k MON / DEX 3.74k MON</small>
+            </article>
+            <article class="stat-card">
+              <span>Ending MC</span>
+              <strong id="mcUsd">$40.8k</strong>
+              <small id="mcLv">1.36M MON</small>
+            </article>
+            <article class="stat-card accent">
+              <span>Secondary Spot</span>
+              <strong id="spotLv">0.0014 MON</strong>
+              <small id="spotUsd">$0.00004</small>
+            </article>
+            <article class="stat-card num">
+              <span>ICO Cost</span>
+              <strong id="userPriceLv">0.0012 MON</strong>
+              <small>Participant entry price</small>
+            </article>
+          </div>
+        </section>
+
+        <details class="panel optional-panel collapsible">
+          <summary class="panel-head">
+            <div>
+              <h2>Optional Project Details</h2>
+              <p>Rich text and links shown on the public launch page.</p>
+            </div>
+            <span class="summary-action">
+              <span class="panel-index">03</span>
+              <i data-lucide="chevron-down"></i>
+            </span>
+          </summary>
+
+          <div class="rich-toolbar" aria-label="Rich text toolbar">
+            <button type="button" data-command="undo" aria-label="Undo"><i data-lucide="undo-2"></i></button>
+            <button type="button" data-command="redo" aria-label="Redo"><i data-lucide="redo-2"></i></button>
+            <select id="blockType" aria-label="Block type">
+              <option value="P">Paragraph</option>
+              <option value="H2">Heading</option>
+              <option value="BLOCKQUOTE">Quote</option>
+            </select>
+            <button type="button" data-command="bold" aria-label="Bold"><strong>B</strong></button>
+            <button type="button" data-command="italic" aria-label="Italic"><em>I</em></button>
+            <button type="button" data-command="underline" aria-label="Underline"><u>U</u></button>
+            <button type="button" data-command="createLink" aria-label="Link"><i data-lucide="link"></i></button>
+            <button type="button" data-command="insertUnorderedList" aria-label="Bulleted list"><i data-lucide="list"></i></button>
+            <button type="button" data-command="insertOrderedList" aria-label="Numbered list"><i data-lucide="list-ordered"></i></button>
+            <button type="button" data-insert="table" aria-label="Table"><i data-lucide="table-2"></i></button>
+            <button type="button" data-insert="image" aria-label="Image note"><i data-lucide="image-plus"></i></button>
+          </div>
+
+          <div class="editor-grid">
+            <section class="rich-field">
+              <span>Introduction</span>
+              <div class="rich-editor" contenteditable="true" data-placeholder="Write the project introduction. Supports headings, lists, links, tables, and media notes."></div>
+            </section>
+            <section class="rich-field">
+              <span>How it Works</span>
+              <div class="rich-editor" contenteditable="true" data-placeholder="Explain launch flow, fund routing, distribution mechanics, and participation rules."></div>
+            </section>
+            <section class="rich-field">
+              <span>Roadmap</span>
+              <div class="rich-editor" contenteditable="true" data-placeholder="Add phases, milestones, timelines, and delivery checkpoints."></div>
+            </section>
+            <section class="rich-field">
+              <span>Additional Details</span>
+              <div class="rich-editor" contenteditable="true" data-placeholder="Add governance, multisig, eligibility, campaign details, or risk notes."></div>
+            </section>
+          </div>
+
+          <div class="link-grid">
+            <label class="field">
+              <span>Twitter</span>
+              <input type="url" value="https://x.com/leverup">
+            </label>
+            <label class="field">
+              <span>Website</span>
+              <input type="url" value="https://leverup.xyz">
+            </label>
+          </div>
+        </details>
+
+        <details class="panel prebuy-panel collapsible">
+          <summary class="panel-head">
+            <div>
+              <h2>Pre-buy Token</h2>
+              <p>Optional founder buy from the Public Sale allocation.</p>
+            </div>
+            <span class="summary-action">
+              <span class="panel-index">04</span>
+              <i data-lucide="chevron-down"></i>
+            </span>
+          </summary>
+
+          <label class="field">
+            <span>Public Sale Share</span>
+            <div class="amount-input">
+              <input id="prebuyShare" type="number" min="0" max="100" step="0.1" value="5">
+              <strong>%</strong>
+            </div>
+            <input id="prebuyRange" type="range" min="0" max="100" step="0.1" value="5">
+            <small id="prebuyLimit">Max: 100% of Public Sale</small>
+          </label>
+
+          <div class="prebuy-readout">
+            <div>
+              <span>Total Supply Share</span>
+              <strong id="prebuyTotalPct">0.97%</strong>
+            </div>
+            <div>
+              <span>Tokens</span>
+              <strong id="prebuyTokens">9.66M</strong>
+            </div>
+            <div>
+              <span>Required MON</span>
+              <strong id="prebuyMon">12.1k</strong>
+            </div>
+            <div>
+              <span>Required USD</span>
+              <strong id="prebuyUsd">$350</strong>
+            </div>
+          </div>
+        </details>
+      </div>
+
+      <aside class="preview-rail">
+        <section class="panel token-preview-panel">
+          <div class="preview-header">
+            <div class="preview-token">
+              <span class="preview-avatar">
+                <img id="railTokenPreview" alt="">
+                <i data-lucide="circle-dot"></i>
+              </span>
+              <div>
+                <strong id="previewName">Project Name</strong>
+                <span id="previewTicker">$TICKER</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="donut-wrap">
+            <div id="donut" class="donut" aria-label="Tokenomics allocation chart">
+              <div>
+                <strong id="donutMain">100%</strong>
+                <span>Total Supply</span>
+              </div>
+            </div>
+            <div class="legend">
+              <span><i class="swatch public"></i>Public Sale</span>
+              <span><i class="swatch liquidity"></i>Liquidity</span>
+              <span><i class="swatch community"></i>Community</span>
+            </div>
+          </div>
+
+          <div id="stackedBar" class="stacked-bar"></div>
+        </section>
+
+        <section class="panel allocations-panel">
+          <div class="panel-head compact">
+            <div>
+              <h2>Allocation</h2>
+              <p>Supply split at secondary spot.</p>
+            </div>
+          </div>
+
+          <div class="allocation-list">
+            <article class="allocation-card public">
+              <span>Public Sale</span>
+              <strong id="publicPct">19.31%</strong>
+              <small id="publicTokens">193.10M tokens</small>
+              <em id="publicValue">$8.4k @ spot</em>
+            </article>
+            <article class="allocation-card liquidity">
+              <span>Liquidity</span>
+              <strong id="liquidityPct">17.15%</strong>
+              <small id="liquidityTokens">171.50M tokens</small>
+              <em id="liquidityValue">$7.5k @ spot</em>
+            </article>
+            <article class="allocation-card community">
+              <span>Community</span>
+              <strong id="communityPct">63.54%</strong>
+              <small id="communityTokens">635.40M tokens</small>
+              <em id="communityValue">$27.8k @ spot</em>
+            </article>
+          </div>
+        </section>
+
+        <section id="warnings" class="warning-stack" aria-live="polite"></section>
+      </aside>
+    </section>
+    </section>
+  </main>
+</body>
+</html>

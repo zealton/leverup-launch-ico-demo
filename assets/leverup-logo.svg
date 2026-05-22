@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 24" fill="none">
+  
+  <rect x="0" y="14" width="3" height="10" fill="#CCFF00"></rect>
+  <rect x="5" y="9" width="3" height="15" fill="#CCFF00"></rect>
+  <rect x="10" y="4" width="3" height="20" fill="#CCFF00"></rect>
+  
+  <text x="19" y="19" font-family="Inter, system-ui, sans-serif" font-weight="700" font-size="15" fill="#FAFAFA" letter-spacing="-0.3">Lever</text>
+  <text x="64" y="19" font-family="Inter, system-ui, sans-serif" font-weight="700" font-size="15" fill="#CCFF00" letter-spacing="-0.3">Up</text>
+</svg>
