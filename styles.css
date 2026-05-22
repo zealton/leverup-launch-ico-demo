@@ -985,10 +985,13 @@ button {
 }
 
 .tx-row {
+  display: block;
   padding: 9px 0;
   border-bottom: 1px solid var(--border-default);
+  color: inherit;
   font-family: var(--font-mono);
   font-size: 11px;
+  text-decoration: none;
 }
 
 .tx-row:last-child {
@@ -997,6 +1000,18 @@ button {
 
 .tx-row span {
   color: var(--text-muted);
+}
+
+.tx-link {
+  cursor: pointer;
+}
+
+.tx-link:hover {
+  background: var(--bg-surface-1);
+}
+
+.tx-link:hover span:first-child {
+  color: var(--accent-long);
 }
 
 .print-btn {

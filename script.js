@@ -237,9 +237,9 @@ const launchTokens = [
     summary: "Launch intelligence token with Community allocation routed to Trade to Mine.",
     tokenomics: { publicSale: 23.5, liquidity: 19.1, community: 57.4 },
     txs: [
-      ["0xb7a1...2d90", "12,400 MON", "Buyback"],
-      ["0x91c4...a330", "8,900 MON", "Buyback"],
-      ["0xf01d...95be", "6,250 MON", "Buyback"],
+      { label: "0xb7a1...2d90", amount: "12,400 MON", type: "Buyback", tx: "0xb7a12d90f4e7a6c290c12d4687e150ea83a47f7bb508a6d2eead7a945b8d2d90" },
+      { label: "0x91c4...a330", amount: "8,900 MON", type: "Buyback", tx: "0x91c4a330d4e6b91a889b072cb3a0d2fd2a25ee18f1c4b12a771e9ff1d6caa330" },
+      { label: "0xf01d...95be", amount: "6,250 MON", type: "Buyback", tx: "0xf01d95be67bd3c4487104b721ac74dbe854bb97c74ec7b7d6acae3a9822a95be" },
     ],
   },
   {
@@ -263,8 +263,8 @@ const launchTokens = [
     summary: "Community vault token distributing mined allocation through volume and P&L competitions.",
     tokenomics: { publicSale: 20.8, liquidity: 18.4, community: 60.8 },
     txs: [
-      ["0xe92a...db77", "4,400 MON", "Buyback"],
-      ["0x3a76...05aa", "2,150 MON", "Buyback"],
+      { label: "0xe92a...db77", amount: "4,400 MON", type: "Buyback", tx: "0xe92adb774d5cb5421c5fb426c06fd18b0ac9f3f4f82857f19eac5036b142db77" },
+      { label: "0x3a76...05aa", amount: "2,150 MON", type: "Buyback", tx: "0x3a7605aa662f468cb3f44b5011eeaa20c17f52e70af52d960671dfa25d6605aa" },
     ],
   },
   {
@@ -288,8 +288,8 @@ const launchTokens = [
     summary: "Desk token running a focused Trade to Mine pool for volume and P&L contributors.",
     tokenomics: { publicSale: 18.9, liquidity: 17.8, community: 63.3 },
     txs: [
-      ["0x6cd4...0a61", "2,900 MON", "Buyback"],
-      ["0x2f99...b711", "1,120 MON", "Buyback"],
+      { label: "0x6cd4...0a61", amount: "2,900 MON", type: "Buyback", tx: "0x6cd40a61e891b4732f762e9e5d2b03d245ae8b6d4f11c30adf6f847ad1ba0a61" },
+      { label: "0x2f99...b711", amount: "1,120 MON", type: "Buyback", tx: "0x2f99b71113ab11f6863a8c5f125463b01f7591a8890b1ac44a1e7ee46cd2b711" },
     ],
   },
 ];
@@ -631,11 +631,11 @@ function renderLaunchDetail(id) {
   ` : "";
 
   const txRows = token.txs.map((tx) => `
-    <div class="tx-row">
-      <span>${escapeHtml(tx[0])}</span>
-      <strong>${escapeHtml(tx[1])}</strong>
-      <span>${escapeHtml(tx[2])}</span>
-    </div>
+    <a class="tx-row tx-link" href="${scanTxUrl(tx.tx)}" target="_blank" rel="noreferrer">
+      <span>${escapeHtml(tx.label)}</span>
+      <strong>${escapeHtml(tx.amount)}</strong>
+      <span>${escapeHtml(tx.type)}</span>
+    </a>
   `).join("") || `<div class="tx-row"><span>No buyback transactions yet.</span><strong>0 MON</strong><span>Pending</span></div>`;
 
   const fundingPanel = isLive ? `
