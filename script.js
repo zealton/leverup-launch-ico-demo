@@ -110,6 +110,12 @@ const launchTokens = [
       how: "ICO funds seed the launch curve. Public Sale receives fixed-cost tokens while Community allocation remains reserved for post-launch mining rewards.",
       roadmap: "Launch, creator quests, Trade to Mine activation, then staking campaign integrations.",
     },
+    fundingTxs: [
+      { wallet: "0x91c4...a330", amountMon: 120_000, time: "May 22, 10:18", tx: "0x91c4a330d4e6b91a889b072cb3a0d2fd2a25ee18f1c4b12a771e9ff1d6caa330" },
+      { wallet: "0x6cd4...0a61", amountMon: 86_500, time: "May 22, 09:44", tx: "0x6cd40a61e891b4732f762e9e5d2b03d245ae8b6d4f11c30adf6f847ad1ba0a61" },
+      { wallet: "0xf01d...95be", amountMon: 52_000, time: "May 21, 22:08", tx: "0xf01d95be67bd3c4487104b721ac74dbe854bb97c74ec7b7d6acae3a9822a95be" },
+      { wallet: "0x3e09...2bf1", amountMon: 18_000, time: "May 21, 18:31", tx: "0x3e092bf1b6e9d4a61b8df3a71a8e13d3322b701cf8a90c4ef86a785df8aa2bf1" },
+    ],
     txs: [],
   },
   {
@@ -136,6 +142,11 @@ const launchTokens = [
       how: "The Community bucket is reserved for weekly post-launch trading and builder incentive programs.",
       roadmap: "Raise completion, deployment, first mining epoch, then developer bounty seasons.",
     },
+    fundingTxs: [
+      { wallet: "0xa7c2...8810", amountMon: 98_000, time: "May 22, 08:12", tx: "0xa7c288105e69f86b23017147bb13612da9f77af9a3e8d31c141f46fb829a8810" },
+      { wallet: "0xd421...77ab", amountMon: 74_000, time: "May 21, 23:56", tx: "0xd42177abc5593bd04017a8d2af41e27056e94857c376705214e203df7bb177ab" },
+      { wallet: "0x2f99...b711", amountMon: 44_000, time: "May 21, 17:05", tx: "0x2f99b71113ab11f6863a8c5f125463b01f7591a8890b1ac44a1e7ee46cd2b711" },
+    ],
     txs: [],
   },
   {
@@ -283,6 +294,28 @@ function tokenRemaining(token) {
   return Math.max(0, token.targetMon - token.raisedMon);
 }
 
+function scanTxUrl(tx) {
+  return `https://testnet.monadexplorer.com/tx/${encodeURIComponent(tx)}`;
+}
+
+function shortTx(tx) {
+  return `${tx.slice(0, 6)}...${tx.slice(-4)}`;
+}
+
+function mockTxHash() {
+  return `0x${Array.from({ length: 64 }, () => Math.floor(Math.random() * 16).toString(16)).join("")}`;
+}
+
+function formatTxTime(date = new Date()) {
+  return date.toLocaleString("en-US", {
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  });
+}
+
 function tokenById(id) {
   return launchTokens.find((token) => token.id === id) || launchTokens[0];
 }
@@ -383,6 +416,15 @@ function renderLaunchDetail(id) {
   const message = launchState.detailMessage ? `<div class="notice info">${escapeHtml(launchState.detailMessage)}</div>` : "";
   const maxInvest = Math.min(remaining, token.walletBalanceMon || 0);
   const tokenomics = token.tokenomics || { publicSale: 0, liquidity: 0, community: 0 };
+  const fundingTxs = token.fundingTxs || [];
+  const fundingRows = fundingTxs.map((tx) => `
+    <div class="funding-row">
+      <span>${escapeHtml(tx.wallet)}</span>
+      <strong>${formatMonExact(tx.amountMon)}</strong>
+      <span>${escapeHtml(tx.time)}</span>
+      <a href="${scanTxUrl(tx.tx)}" target="_blank" rel="noreferrer">${escapeHtml(shortTx(tx.tx))}</a>
+    </div>
+  `).join("") || `<div class="funding-row empty"><span>No investments yet.</span><strong>0.000 MON</strong><span>Pending</span><span>-</span></div>`;
 
   const investPanel = isLive ? `
     <section class="panel action-panel">
@@ -396,12 +438,12 @@ function renderLaunchDetail(id) {
         <span>Invest Amount</span>
         <div class="amount-input">
           <input id="detailInvestInput" type="number" min="0" max="${maxInvest}" step="1000" value="${Math.min(10_000, maxInvest)}">
+          <button class="inline-max-btn" type="button" data-action="max" data-id="${token.id}">Max</button>
           <strong>MON</strong>
         </div>
         <small>Available space: ${formatMonExact(remaining)} · Balance: ${formatMonExact(token.walletBalanceMon || 0)}</small>
       </label>
       <div class="action-buttons">
-        <button class="max-btn" type="button" data-action="max" data-id="${token.id}">Max</button>
         <button class="invest-btn" type="button" data-action="invest" data-id="${token.id}">Invest</button>
         <button class="exit-btn" type="button" data-action="withdraw" data-id="${token.id}" ${token.userContributionMon <= 0 ? "disabled" : ""}>Withdraw ${formatMonExact(token.userContributionMon)}</button>
       </div>
@@ -496,20 +538,37 @@ function renderLaunchDetail(id) {
             <p>Launch succeeds only when the configured MON target is fully filled.</p>
           </div>
         </div>
-        <div class="range-block">
-          <div class="progress-block">
-            <div class="progress-label">
-              <span>${formatMonExact(token.raisedMon)} / ${formatMonExact(token.targetMon)}</span>
-              <strong>${progress.toFixed(2)}%</strong>
+        <div class="sub-tabs" role="group" aria-label="Funding detail tabs">
+          <button class="active" type="button" data-funding-tab="overview">Overview</button>
+          <button type="button" data-funding-tab="investments">Investments</button>
+        </div>
+        <div class="funding-panel" data-funding-panel="overview">
+          <div class="range-block">
+            <div class="progress-block">
+              <div class="progress-label">
+                <span>${formatMonExact(token.raisedMon)} / ${formatMonExact(token.targetMon)}</span>
+                <strong>${progress.toFixed(2)}%</strong>
+              </div>
+              <div class="progress-track"><span style="width:${progress}%"></span></div>
             </div>
-            <div class="progress-track"><span style="width:${progress}%"></span></div>
+          </div>
+          <div class="summary-grid">
+            <article class="stat-card"><span>Remaining Capacity</span><strong>${formatMonExact(remaining)}</strong><small>Before deploy trigger</small></article>
+            <article class="stat-card"><span>Your Contribution</span><strong>${formatMonExact(token.userContributionMon)}</strong><small>Can withdraw before target</small></article>
+            <article class="stat-card"><span>Market Cap</span><strong>${formatUsdExact(token.marketCapUsd)}</strong><small>Synced app estimate</small></article>
+            <article class="stat-card"><span>Investors</span><strong>${fundingTxs.length}</strong><small>Wallet entries in this raise</small></article>
           </div>
         </div>
-        <div class="summary-grid">
-          <article class="stat-card"><span>Remaining Capacity</span><strong>${formatMonExact(remaining)}</strong><small>Before deploy trigger</small></article>
-          <article class="stat-card"><span>Your Contribution</span><strong>${formatMonExact(token.userContributionMon)}</strong><small>Can withdraw before target</small></article>
-          <article class="stat-card"><span>Market Cap</span><strong>${formatUsdExact(token.marketCapUsd)}</strong><small>Synced app estimate</small></article>
-          <article class="stat-card"><span>Total Buyback</span><strong>${formatMonExact(token.buybackMon)}</strong><small>Protocol buyback total</small></article>
+        <div class="funding-panel" data-funding-panel="investments" hidden>
+          <div class="funding-table">
+            <div class="funding-row funding-head">
+              <span>Wallet</span>
+              <span>Amount</span>
+              <span>Time</span>
+              <span>Transaction</span>
+            </div>
+            ${fundingRows}
+          </div>
         </div>
       </section>
   ` : `
@@ -924,6 +983,17 @@ refs.blockType.addEventListener("change", (event) => {
 });
 
 refs.launchDetail.addEventListener("click", (event) => {
+  const fundingTab = event.target.closest("[data-funding-tab]");
+  if (fundingTab) {
+    refs.launchDetail.querySelectorAll("[data-funding-tab]").forEach((button) => {
+      button.classList.toggle("active", button === fundingTab);
+    });
+    refs.launchDetail.querySelectorAll("[data-funding-panel]").forEach((panel) => {
+      panel.hidden = panel.dataset.fundingPanel !== fundingTab.dataset.fundingTab;
+    });
+    return;
+  }
+
   const actionTarget = event.target.closest("[data-action]");
   if (!actionTarget) return;
   const action = actionTarget.dataset.action;
@@ -947,6 +1017,10 @@ refs.launchDetail.addEventListener("click", (event) => {
     token.raisedMon += amount;
     token.userContributionMon += amount;
     token.walletBalanceMon = Math.max(0, (token.walletBalanceMon || 0) - amount);
+    token.fundingTxs = [
+      { wallet: "0x8f22...19de", amountMon: amount, time: formatTxTime(), tx: mockTxHash() },
+      ...(token.fundingTxs || []),
+    ];
     if (token.raisedMon >= token.targetMon) {
       token.raisedMon = token.targetMon;
       token.status = "Launched";
