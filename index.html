@@ -153,7 +153,7 @@
                 <strong id="raiseSuffix">MON</strong>
               </div>
               <small id="floorLabel">Minimum: 230,000 MON graduation threshold. No hard maximum.</small>
-              <div id="raiseEquivalent" class="raise-equivalent"></div>
+              <small id="raiseEquivalent" class="raise-inline-meta"></small>
             </label>
           </div>
 
@@ -165,35 +165,28 @@
             </div>
           </div>
 
-          <div class="summary-grid">
-            <article class="stat-card success">
+          <div class="launch-summary">
+            <div>
               <span>Launch Condition</span>
               <strong id="statusValue">Target Set</strong>
               <small id="statusMeta">Deploys only after the target is fully raised.</small>
-            </article>
-            <article class="stat-card">
-              <span>Ending MC</span>
+            </div>
+            <div>
+              <span>Launch Successful MC</span>
               <strong id="mcUsd">$40.8k</strong>
               <small id="mcLv">1.36M MON</small>
-            </article>
-            <article class="stat-card accent">
-              <span>Secondary Spot</span>
-              <strong id="spotLv">0.0014 MON</strong>
-              <small id="spotUsd">$0.00004</small>
-            </article>
-            <article class="stat-card num">
-              <span>ICO Cost</span>
-              <strong id="userPriceLv">0.0012 MON</strong>
-              <small>Participant entry price</small>
-            </article>
+            </div>
           </div>
         </section>
 
         <details class="panel optional-panel collapsible">
           <summary class="panel-head">
             <div>
-              <h2>Optional Project Details</h2>
-              <p>Rich text and links shown on the public launch page.</p>
+              <div class="title-line">
+                <h2>Optional Project Details</h2>
+                <span class="optional-badge">Optional</span>
+              </div>
+              <p>Add richer public launch content. You can skip this and launch with required fields only.</p>
             </div>
             <span class="summary-action">
               <span class="panel-index">03</span>
@@ -253,8 +246,11 @@
         <details class="panel prebuy-panel collapsible">
           <summary class="panel-head">
             <div>
-              <h2>Pre-buy Token</h2>
-              <p>Optional founder buy from the Public Sale allocation.</p>
+              <div class="title-line">
+                <h2>Pre-buy Token</h2>
+                <span class="optional-badge">Optional</span>
+              </div>
+              <p>Reserve a founder buy from the Public Sale allocation. Leave empty to launch without pre-buy.</p>
             </div>
             <span class="summary-action">
               <span class="panel-index">04</span>
@@ -287,6 +283,14 @@
             </div>
           </div>
         </details>
+
+        <section class="panel launch-submit-panel">
+          <div>
+            <span>Ready to send this launch to Nad.Fun</span>
+            <strong id="launchSubmitSummary">Target 230,000 MON · Public Sale 0.00%</strong>
+          </div>
+          <button id="launchTokenButton" type="button">Launch Token</button>
+        </section>
       </div>
 
       <aside class="preview-rail">
@@ -325,7 +329,7 @@
           <div class="panel-head compact">
             <div>
               <h2>Allocation</h2>
-              <p>Supply split at secondary spot.</p>
+              <p>Supply split after successful launch.</p>
             </div>
           </div>
 
@@ -334,19 +338,19 @@
               <span>Public Sale</span>
               <strong id="publicPct">19.31%</strong>
               <small id="publicTokens">193.10M tokens</small>
-              <em id="publicValue">$8.4k @ spot</em>
+              <em id="publicValue">$8.4k estimate</em>
             </article>
             <article class="allocation-card liquidity">
               <span>Liquidity</span>
               <strong id="liquidityPct">17.15%</strong>
               <small id="liquidityTokens">171.50M tokens</small>
-              <em id="liquidityValue">$7.5k @ spot</em>
+              <em id="liquidityValue">$7.5k estimate</em>
             </article>
             <article class="allocation-card community">
               <span>Community</span>
               <strong id="communityPct">63.54%</strong>
               <small id="communityTokens">635.40M tokens</small>
-              <em id="communityValue">$27.8k @ spot</em>
+              <em id="communityValue">$27.8k estimate</em>
             </article>
           </div>
         </section>

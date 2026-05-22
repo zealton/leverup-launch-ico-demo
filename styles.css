@@ -1136,6 +1136,26 @@ h1 {
   color: var(--accent-long);
 }
 
+.title-line {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.optional-badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 20px;
+  padding: 0 7px;
+  border: 1px solid var(--border-default);
+  border-radius: 999px;
+  color: var(--text-subtle);
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
 .summary-action svg {
   width: 16px;
   height: 16px;
@@ -1359,14 +1379,10 @@ h2 {
   font-weight: 700;
 }
 
-.raise-equivalent {
-  padding: 8px 10px;
-  border: 1px solid var(--accent-long-deep);
-  border-radius: 4px;
-  background: var(--accent-long-bg);
-  color: var(--accent-long);
+.raise-inline-meta {
+  color: var(--text-muted);
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
 }
 
@@ -1427,6 +1443,40 @@ input[type="range"] {
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 10px;
   padding: 0 16px 16px;
+}
+
+.launch-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px 26px;
+  align-items: center;
+  padding: 0 16px 16px;
+}
+
+.launch-summary div {
+  display: inline-flex;
+  gap: 8px;
+  align-items: baseline;
+  min-width: 0;
+}
+
+.launch-summary span {
+  color: var(--text-subtle);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.launch-summary strong {
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.launch-summary small {
+  color: var(--text-subtle);
+  font-family: var(--font-mono);
+  font-size: 11px;
 }
 
 .market-summary-panel {
@@ -1858,6 +1908,46 @@ input[type="range"] {
   font-size: 14px;
 }
 
+.launch-submit-panel {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+  padding: 14px 16px;
+}
+
+.launch-submit-panel div {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.launch-submit-panel span {
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.launch-submit-panel strong {
+  overflow: hidden;
+  color: var(--text-subtle);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.launch-submit-panel button {
+  min-height: 38px;
+  padding: 0 18px;
+  border: 1px solid var(--accent-long);
+  border-radius: 4px;
+  background: var(--accent-long);
+  color: var(--text-on-accent);
+  font-weight: 800;
+  white-space: nowrap;
+}
+
 .warning-stack {
   display: grid;
   gap: 8px;
@@ -1951,6 +2041,10 @@ input[type="range"] {
 
   .field-grid {
     grid-template-columns: 1fr;
+  }
+
+  .launch-submit-panel {
+    display: grid;
   }
 
   .launch-list {

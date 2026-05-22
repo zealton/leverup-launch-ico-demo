@@ -35,9 +35,8 @@ const refs = {
   statusMeta: $("statusMeta"),
   mcUsd: $("mcUsd"),
   mcLv: $("mcLv"),
-  spotLv: $("spotLv"),
-  spotUsd: $("spotUsd"),
-  userPriceLv: $("userPriceLv"),
+  launchSubmitSummary: $("launchSubmitSummary"),
+  launchTokenButton: $("launchTokenButton"),
   donut: $("donut"),
   publicPct: $("publicPct"),
   publicTokens: $("publicTokens"),
@@ -974,7 +973,7 @@ function render({ clamp = true } = {}) {
   refs.raiseSuffix.textContent = "MON";
   refs.raiseInput.value = formatRaiseAmount(state.raiseValue);
   refs.floorLabel.textContent = `Minimum: ${formatWhole(floor, "", " MON")} graduation threshold. No hard maximum.`;
-  refs.raiseEquivalent.textContent = `USD equivalent: ${formatUsdExact(state.raiseValue * state.monUsd)}`;
+  refs.raiseEquivalent.textContent = `≈ ${formatUsdExact(state.raiseValue * state.monUsd)} · ICO Rate ${model.pUser.toPrecision(4)} MON`;
   configureRange();
 
   refs.graduationBadge.textContent = model.graduated ? "Ready" : "Below Minimum";
@@ -984,19 +983,17 @@ function render({ clamp = true } = {}) {
     : `Set at least ${formatWhole(floor, "", " MON")} to enable launch.`;
   refs.mcUsd.textContent = formatCompact(model.mcCurve * state.monUsd, "$");
   refs.mcLv.textContent = `${formatCompact(model.mcCurve)} MON`;
-  refs.spotLv.textContent = `${model.pCurve.toPrecision(4)} MON`;
-  refs.spotUsd.textContent = formatCompact(model.pCurve * state.monUsd, "$");
-  refs.userPriceLv.textContent = `${model.pUser.toPrecision(4)} MON`;
+  refs.launchSubmitSummary.textContent = `Target ${formatWhole(state.raiseValue, "", " MON")} · Public Sale ${formatPct(model.publicPct)}`;
 
   refs.publicPct.textContent = formatPct(model.publicPct);
   refs.publicTokens.textContent = `${formatCompact(model.tUser)} tokens`;
-  refs.publicValue.textContent = `${formatCompact(model.tUser * model.pCurve * state.monUsd, "$")} @ spot`;
+  refs.publicValue.textContent = `${formatCompact(model.tUser * model.pCurve * state.monUsd, "$")} estimate`;
   refs.liquidityPct.textContent = formatPct(model.liquidityPct);
   refs.liquidityTokens.textContent = `${formatCompact(model.tLiquidity)} tokens`;
-  refs.liquidityValue.textContent = `${formatCompact(model.tLiquidity * model.pCurve * state.monUsd, "$")} @ spot`;
+  refs.liquidityValue.textContent = `${formatCompact(model.tLiquidity * model.pCurve * state.monUsd, "$")} estimate`;
   refs.communityPct.textContent = formatPct(model.communityPct);
   refs.communityTokens.textContent = `${formatCompact(model.tComm)} tokens`;
-  refs.communityValue.textContent = `${formatCompact(model.tComm * model.pCurve * state.monUsd, "$")} @ spot`;
+  refs.communityValue.textContent = `${formatCompact(model.tComm * model.pCurve * state.monUsd, "$")} estimate`;
 
   renderBars(model);
   renderPrebuy();
@@ -1031,6 +1028,9 @@ refs.prebuyShare.addEventListener("input", renderPrebuy);
 refs.prebuyRange.addEventListener("input", (event) => {
   refs.prebuyShare.value = event.target.value;
   renderPrebuy();
+});
+refs.launchTokenButton.addEventListener("click", () => {
+  refs.launchSubmitSummary.textContent = `Launch ticket prepared for Nad.Fun handoff · Target ${formatWhole(state.raiseValue, "", " MON")}`;
 });
 refs.projectName.addEventListener("input", () => {
   refs.previewName.textContent = refs.projectName.value.trim() || "Project Name";
