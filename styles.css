@@ -236,46 +236,6 @@ button {
   padding: 0;
 }
 
-.sort-tabs {
-  display: inline-flex;
-  align-items: center;
-  gap: 2px;
-  padding: 3px;
-  border: 1px solid var(--border-default);
-  border-radius: 6px;
-  background: var(--bg-panel);
-}
-
-.sort-tabs span {
-  padding: 0 8px;
-  color: var(--text-subtle);
-  font-size: 10px;
-  font-weight: 800;
-  text-transform: uppercase;
-}
-
-.sort-tabs button {
-  min-width: 44px;
-  min-height: 28px;
-  padding: 0 10px;
-  border: 0;
-  border-radius: 4px;
-  background: transparent;
-  color: var(--text-muted);
-  font-size: 11px;
-  font-weight: 800;
-}
-
-.sort-tabs button:hover {
-  color: var(--text-primary);
-  background: var(--bg-surface-2);
-}
-
-.sort-tabs button.active {
-  color: var(--accent-long);
-  background: var(--accent-long-bg);
-}
-
 .dash-card {
   display: grid;
   gap: 12px;
@@ -384,12 +344,18 @@ button {
   border: 0;
   background: transparent;
   color: inherit;
+  cursor: pointer;
+  font-weight: 800;
   text-align: left;
   text-transform: uppercase;
 }
 
 .mine-header button.active {
   color: var(--accent-long);
+}
+
+.mine-header button:hover {
+  color: var(--text-primary);
 }
 
 .mine-row {
@@ -1881,14 +1847,6 @@ input[type="range"] {
 
   .launch-list {
     max-height: none;
-  }
-
-  .panel-head:has(.sort-tabs) {
-    display: grid;
-  }
-
-  .sort-tabs {
-    width: max-content;
   }
 
   .mine-row {

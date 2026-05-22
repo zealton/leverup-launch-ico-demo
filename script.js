@@ -83,6 +83,7 @@ const refs = {
 const launchState = {
   detailMessage: "",
   mineSort: "value",
+  mineSortDir: "desc",
 };
 
 const launchTokens = [
@@ -322,17 +323,25 @@ function tokenById(id) {
 
 function sortedMineTokens() {
   const tokens = launchTokens.filter((token) => token.status === "Launched");
-  const sorters = {
-    value: (a, b) => b.mineValueUsd - a.mineValueUsd,
-    time: (a, b) => (a.epochRemainingHours || 0) - (b.epochRemainingHours || 0),
-    mc: (a, b) => b.marketCapUsd - a.marketCapUsd,
+  const values = {
+    value: (token) => token.mineValueUsd,
+    time: (token) => token.epochRemainingHours || 0,
+    mc: (token) => token.marketCapUsd,
   };
+  const valueGetter = values[launchState.mineSort] || values.value;
+  const direction = launchState.mineSortDir === "asc" ? 1 : -1;
 
-  return [...tokens].sort(sorters[launchState.mineSort] || sorters.value);
+  return [...tokens].sort((a, b) => (valueGetter(a) - valueGetter(b)) * direction);
 }
 
 function sortLabel(sortKey) {
-  return sortKey === launchState.mineSort ? `${sortKey === "mc" ? "MC" : sortKey[0].toUpperCase() + sortKey.slice(1)} v` : sortKey === "mc" ? "MC" : sortKey[0].toUpperCase() + sortKey.slice(1);
+  const label = sortKey === "mc" ? "MC" : sortKey[0].toUpperCase() + sortKey.slice(1);
+  if (sortKey !== launchState.mineSort) return label;
+  return `${label} ${launchState.mineSortDir === "asc" ? "↑" : "↓"}`;
+}
+
+function defaultMineSortDir(sortKey) {
+  return sortKey === "time" ? "asc" : "desc";
 }
 
 function renderMineHeader() {
@@ -340,9 +349,9 @@ function renderMineHeader() {
     <div class="mine-header">
       <span>Coin</span>
       <span>Pool</span>
-      <button type="button" class="${launchState.mineSort === "value" ? "active" : ""}" data-mine-sort="value">${sortLabel("value")}</button>
-      <button type="button" class="${launchState.mineSort === "time" ? "active" : ""}" data-mine-sort="time">${sortLabel("time")}</button>
-      <button type="button" class="${launchState.mineSort === "mc" ? "active" : ""}" data-mine-sort="mc">${sortLabel("mc")}</button>
+      <button type="button" class="${launchState.mineSort === "value" ? "active" : ""}" data-mine-sort="value" aria-label="Sort by mine value">${sortLabel("value")}</button>
+      <button type="button" class="${launchState.mineSort === "time" ? "active" : ""}" data-mine-sort="time" aria-label="Sort by epoch time remaining">${sortLabel("time")}</button>
+      <button type="button" class="${launchState.mineSort === "mc" ? "active" : ""}" data-mine-sort="mc" aria-label="Sort by market cap">${sortLabel("mc")}</button>
       <span>Mine</span>
     </div>
   `;
@@ -410,9 +419,6 @@ function renderDashboardCard(token, mode) {
 
 function renderLaunchDashboard() {
   if (!refs.liveDashboard || !refs.mineDashboard) return;
-  document.querySelectorAll("[data-mine-sort]").forEach((button) => {
-    button.classList.toggle("active", button.dataset.mineSort === launchState.mineSort);
-  });
   refs.liveDashboard.innerHTML = launchTokens
     .filter((token) => token.status === "Live")
     .map((token) => renderDashboardCard(token, "live"))
@@ -1062,7 +1068,13 @@ refs.launchDetail.addEventListener("click", (event) => {
 document.addEventListener("click", (event) => {
   const sortButton = event.target.closest("[data-mine-sort]");
   if (sortButton) {
-    launchState.mineSort = sortButton.dataset.mineSort;
+    const nextSort = sortButton.dataset.mineSort;
+    if (launchState.mineSort === nextSort) {
+      launchState.mineSortDir = launchState.mineSortDir === "asc" ? "desc" : "asc";
+    } else {
+      launchState.mineSort = nextSort;
+      launchState.mineSortDir = defaultMineSortDir(nextSort);
+    }
     renderLaunchDashboard();
     return;
   }
