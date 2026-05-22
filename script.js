@@ -94,17 +94,22 @@ const launchTokens = [
     targetMon: 620_000,
     raisedMon: 438_500,
     userContributionMon: 18_000,
+    walletBalanceMon: 245_320.5,
     marketCapUsd: 184_000,
-    buybackMon: 12_420,
+    buybackMon: 0,
     mineTokens: 250_000,
     mineValueUsd: 3_750,
     mineEpoch: "Epoch 14",
     nadUrl: "https://www.nad.fun/",
+    tradeUrl: "https://mush-token.leverup.xyz",
     summary: "Stake and trade with MUSH collateral to mine weekly community rewards.",
-    txs: [
-      ["0x9ac1...22e1", "3,420 MON", "Buyback"],
-      ["0x831e...5b4a", "1,880 MON", "Buyback"],
-    ],
+    tokenomics: { publicSale: 22.4, liquidity: 18.7, community: 58.9 },
+    details: {
+      introduction: "Mushroom is a Monad-native culture token for weekly creator campaigns and trading quests.",
+      how: "ICO funds seed the launch curve. Public Sale receives fixed-cost tokens while Community allocation remains reserved for post-launch mining rewards.",
+      roadmap: "Launch, creator quests, Trade to Mine activation, then staking campaign integrations.",
+    },
+    txs: [],
   },
   {
     id: "byte",
@@ -115,14 +120,22 @@ const launchTokens = [
     targetMon: 1_200_000,
     raisedMon: 286_000,
     userContributionMon: 0,
+    walletBalanceMon: 85_100,
     marketCapUsd: 96_000,
-    buybackMon: 4_800,
+    buybackMon: 0,
     mineTokens: 420_000,
     mineValueUsd: 5_880,
     mineEpoch: "Epoch 14",
     nadUrl: "https://www.nad.fun/",
+    tradeUrl: "https://byte-token.leverup.xyz",
     summary: "Infrastructure meme for build competitions, contributor quests, and trading fee rewards.",
-    txs: [["0x421d...77aa", "980 MON", "Buyback"]],
+    tokenomics: { publicSale: 14.6, liquidity: 20.3, community: 65.1 },
+    details: {
+      introduction: "Byte Forge targets builders who want a launch-native reward layer for tools, bots, and hackathon contributions.",
+      how: "The Community bucket is reserved for weekly post-launch trading and builder incentive programs.",
+      roadmap: "Raise completion, deployment, first mining epoch, then developer bounty seasons.",
+    },
+    txs: [],
   },
   {
     id: "signal",
@@ -138,8 +151,11 @@ const launchTokens = [
     mineTokens: 9_580_000,
     mineValueUsd: 301_770,
     mineEpoch: "Epoch 15",
+    epochEndsIn: "4d 12h",
     nadUrl: "https://www.nad.fun/",
+    tradeUrl: "https://sign-token.leverup.xyz",
     summary: "Launch intelligence token with Community allocation routed to Trade to Mine.",
+    tokenomics: { publicSale: 23.5, liquidity: 19.1, community: 57.4 },
     txs: [
       ["0xb7a1...2d90", "12,400 MON", "Buyback"],
       ["0x91c4...a330", "8,900 MON", "Buyback"],
@@ -160,8 +176,11 @@ const launchTokens = [
     mineTokens: 4_400_000,
     mineValueUsd: 61_600,
     mineEpoch: "Epoch 14",
+    epochEndsIn: "2d 08h",
     nadUrl: "https://www.nad.fun/",
+    tradeUrl: "https://vlt-token.leverup.xyz",
     summary: "Community vault token distributing mined allocation through volume and P&L competitions.",
+    tokenomics: { publicSale: 20.8, liquidity: 18.4, community: 60.8 },
     txs: [
       ["0xe92a...db77", "4,400 MON", "Buyback"],
       ["0x3a76...05aa", "2,150 MON", "Buyback"],
@@ -181,8 +200,11 @@ const launchTokens = [
     mineTokens: 2_100_000,
     mineValueUsd: 29_400,
     mineEpoch: "Epoch 15",
+    epochEndsIn: "6d 03h",
     nadUrl: "https://www.nad.fun/",
+    tradeUrl: "https://orbt-token.leverup.xyz",
     summary: "Desk token running a focused Trade to Mine pool for volume and P&L contributors.",
+    tokenomics: { publicSale: 18.9, liquidity: 17.8, community: 63.3 },
     txs: [
       ["0x6cd4...0a61", "2,900 MON", "Buyback"],
       ["0x2f99...b711", "1,120 MON", "Buyback"],
@@ -224,6 +246,21 @@ function formatPct(value) {
   return `${value.toFixed(2)}%`;
 }
 
+function formatMonExact(value) {
+  return `${Number(value).toLocaleString("en-US", {
+    minimumFractionDigits: 3,
+    maximumFractionDigits: 3,
+  })} MON`;
+}
+
+function formatUsdExact(value) {
+  return `$${Math.round(Number(value)).toLocaleString("en-US")}`;
+}
+
+function formatTokenExact(value, symbol) {
+  return `${Math.round(Number(value)).toLocaleString("en-US")} ${symbol}`;
+}
+
 function escapeHtml(value) {
   return String(value).replace(/[&<>"']/g, (char) => ({
     "&": "&amp;",
@@ -263,19 +300,19 @@ function renderDashboardCard(token, mode) {
           <span class="status-chip live">Live</span>
         </div>
         <div class="progress-block">
-          <div class="progress-label"><span>${formatCompact(token.raisedMon)} / ${formatCompact(token.targetMon)} MON</span><strong>${progress.toFixed(1)}%</strong></div>
+          <div class="progress-label"><span>${formatMonExact(token.raisedMon)} / ${formatMonExact(token.targetMon)}</span><strong>${progress.toFixed(1)}%</strong></div>
           <div class="progress-track"><span style="width:${progress}%"></span></div>
         </div>
         <div class="dash-footer">
-          <span>Remaining ${formatCompact(remaining)} MON</span>
-          <strong>${token.userContributionMon > 0 ? `${formatCompact(token.userContributionMon)} MON entered` : "No entry"}</strong>
+          <span>Remaining ${formatMonExact(remaining)}</span>
+          <strong>${token.userContributionMon > 0 ? `${formatMonExact(token.userContributionMon)} entered` : "No entry"}</strong>
         </div>
       </a>
     `;
   }
 
   return `
-    <a class="dash-card mine" href="#/launch/${token.id}">
+    <article class="dash-card mine">
       <div class="launch-card-head">
         <div class="token-title">
           <span class="token-mark">${escapeHtml(token.ticker.slice(0, 1))}</span>
@@ -284,17 +321,20 @@ function renderDashboardCard(token, mode) {
             <span>$${escapeHtml(token.ticker)} · ${escapeHtml(token.mineEpoch)}</span>
           </div>
         </div>
-        <span class="status-chip launched">Launched</span>
       </div>
       <div class="mine-split">
-        <div><span>Weekly Pool</span><strong>${formatCompact(token.mineTokens)} ${escapeHtml(token.ticker)}</strong></div>
-        <div><span>Value</span><strong>${formatCompact(token.mineValueUsd, "$")}</strong></div>
+        <div><span>Weekly Pool</span><strong>${formatTokenExact(token.mineTokens, escapeHtml(token.ticker))}</strong></div>
+        <div><span>Value</span><strong>${formatUsdExact(token.mineValueUsd)}</strong></div>
       </div>
       <div class="dash-footer">
-        <span>Market Cap ${formatCompact(token.marketCapUsd, "$")}</span>
-        <strong>Open</strong>
+        <span>Epoch ends in ${escapeHtml(token.epochEndsIn || "4d")}</span>
+        <strong>Market Cap ${formatUsdExact(token.marketCapUsd)}</strong>
       </div>
-    </a>
+      <div class="dash-actions">
+        <a href="#/launch/${token.id}">Detail</a>
+        <a class="external" href="${escapeHtml(token.tradeUrl)}" target="_blank" rel="noreferrer">Trade</a>
+      </div>
+    </article>
   `;
 }
 
@@ -318,26 +358,29 @@ function renderLaunchDetail(id) {
   const isLive = token.status === "Live";
   const launched = token.status === "Launched";
   const message = launchState.detailMessage ? `<div class="notice info">${escapeHtml(launchState.detailMessage)}</div>` : "";
+  const maxInvest = Math.min(remaining, token.walletBalanceMon || 0);
+  const tokenomics = token.tokenomics || { publicSale: 0, liquidity: 0, community: 0 };
 
   const investPanel = isLive ? `
     <section class="panel action-panel">
       <div class="panel-head compact">
         <div>
           <h2>Invest</h2>
-          <p>Funds can exit anytime until the configured MON target is reached.</p>
+          <p>Funds can be withdrawn anytime until the configured MON target is reached.</p>
         </div>
       </div>
       <label class="field">
         <span>Invest Amount</span>
         <div class="amount-input">
-          <input id="detailInvestInput" type="number" min="0" max="${remaining}" step="1000" value="${Math.min(10_000, remaining)}">
+          <input id="detailInvestInput" type="number" min="0" max="${maxInvest}" step="1000" value="${Math.min(10_000, maxInvest)}">
           <strong>MON</strong>
         </div>
-        <small>Available space: ${formatCompact(remaining)} MON</small>
+        <small>Available space: ${formatMonExact(remaining)} · Balance: ${formatMonExact(token.walletBalanceMon || 0)}</small>
       </label>
       <div class="action-buttons">
+        <button class="max-btn" type="button" data-action="max" data-id="${token.id}">Max</button>
         <button class="invest-btn" type="button" data-action="invest" data-id="${token.id}">Invest</button>
-        <button class="exit-btn" type="button" data-action="exit" data-id="${token.id}" ${token.userContributionMon <= 0 ? "disabled" : ""}>Exit ${formatCompact(token.userContributionMon)} MON</button>
+        <button class="exit-btn" type="button" data-action="withdraw" data-id="${token.id}" ${token.userContributionMon <= 0 ? "disabled" : ""}>Withdraw ${formatMonExact(token.userContributionMon)}</button>
       </div>
     </section>
   ` : "";
@@ -347,10 +390,11 @@ function renderLaunchDetail(id) {
       <div class="panel-head compact">
         <div>
           <h2>Swap</h2>
-          <p>Open the live Nad.Fun market for this launched token.</p>
+          <p>Open the token market.</p>
         </div>
       </div>
       <div class="external-actions">
+        <a href="${escapeHtml(token.tradeUrl)}" target="_blank" rel="noreferrer">Open token trading page</a>
         <a href="${escapeHtml(token.nadUrl)}" target="_blank" rel="noreferrer">Open nad.fun</a>
       </div>
     </section>
@@ -368,8 +412,8 @@ function renderLaunchDetail(id) {
       <div class="trade-mine-hero">
         <div>
           <span>Mining Pool / Week</span>
-          <strong>${formatCompact(token.mineTokens)} ${escapeHtml(token.ticker)}</strong>
-          <small>${formatCompact(token.mineValueUsd, "$")} estimated value · resets in 4d 12h</small>
+          <strong>${formatTokenExact(token.mineTokens, escapeHtml(token.ticker))}</strong>
+          <small>${formatUsdExact(token.mineValueUsd)} estimated value · resets in ${escapeHtml(token.epochEndsIn || "4d")}</small>
         </div>
         <button type="button">Trade with ${escapeHtml(token.ticker)} as collateral</button>
       </div>
@@ -379,7 +423,7 @@ function renderLaunchDetail(id) {
             <span>Volume</span>
             <strong>70%</strong>
           </div>
-          <div class="rule-pool">${formatCompact(token.mineTokens * 0.7)} ${escapeHtml(token.ticker)}</div>
+          <div class="rule-pool">${formatTokenExact(token.mineTokens * 0.7, escapeHtml(token.ticker))}</div>
           <p>All qualifying traders split this pool pro-rata by qualifying trading volume.</p>
           <div class="rule-lines">
             <div><span>Eligibility</span><strong>Trade volume counted up to 100x</strong></div>
@@ -396,7 +440,7 @@ function renderLaunchDetail(id) {
             <span>P&L</span>
             <strong>30%</strong>
           </div>
-          <div class="rule-pool">${formatCompact(token.mineTokens * 0.3)} ${escapeHtml(token.ticker)}</div>
+          <div class="rule-pool">${formatTokenExact(token.mineTokens * 0.3, escapeHtml(token.ticker))}</div>
           <p>Only top 10 positive P&L traders share this pool by their P&L weight.</p>
           <div class="rule-lines">
             <div><span>Your P&L rank</span><strong>#14</strong></div>
@@ -404,9 +448,9 @@ function renderLaunchDetail(id) {
             <div><span>Your P&L</span><strong>+$680</strong></div>
           </div>
           <div class="leaderboard-mini">
-            <div class="tx-row"><span>#1 0xa7c2...8810</span><strong>+$8.42k</strong><span>${formatCompact(token.mineTokens * 0.087)} ${escapeHtml(token.ticker)}</span></div>
-            <div class="tx-row"><span>#2 0x3e09...2bf1</span><strong>+$5.64k</strong><span>${formatCompact(token.mineTokens * 0.058)} ${escapeHtml(token.ticker)}</span></div>
-            <div class="tx-row"><span>#3 0xd421...77ab</span><strong>+$4.21k</strong><span>${formatCompact(token.mineTokens * 0.044)} ${escapeHtml(token.ticker)}</span></div>
+            <div class="tx-row"><span>#1 0xa7c2...8810</span><strong>+$8,420</strong><span>${formatTokenExact(token.mineTokens * 0.087, escapeHtml(token.ticker))}</span></div>
+            <div class="tx-row"><span>#2 0x3e09...2bf1</span><strong>+$5,640</strong><span>${formatTokenExact(token.mineTokens * 0.058, escapeHtml(token.ticker))}</span></div>
+            <div class="tx-row"><span>#3 0xd421...77ab</span><strong>+$4,210</strong><span>${formatTokenExact(token.mineTokens * 0.044, escapeHtml(token.ticker))}</span></div>
           </div>
         </article>
       </div>
@@ -432,17 +476,17 @@ function renderLaunchDetail(id) {
         <div class="range-block">
           <div class="progress-block">
             <div class="progress-label">
-              <span>${formatCompact(token.raisedMon)} / ${formatCompact(token.targetMon)} MON</span>
+              <span>${formatMonExact(token.raisedMon)} / ${formatMonExact(token.targetMon)}</span>
               <strong>${progress.toFixed(2)}%</strong>
             </div>
             <div class="progress-track"><span style="width:${progress}%"></span></div>
           </div>
         </div>
         <div class="summary-grid">
-          <article class="stat-card"><span>Remaining Capacity</span><strong>${formatCompact(remaining)} MON</strong><small>Before deploy trigger</small></article>
-          <article class="stat-card"><span>Your Contribution</span><strong>${formatCompact(token.userContributionMon)} MON</strong><small>Can exit before target</small></article>
-          <article class="stat-card"><span>Market Cap</span><strong>${formatCompact(token.marketCapUsd, "$")}</strong><small>Synced app estimate</small></article>
-          <article class="stat-card"><span>Total Buyback</span><strong>${formatCompact(token.buybackMon)} MON</strong><small>Protocol buyback total</small></article>
+          <article class="stat-card"><span>Remaining Capacity</span><strong>${formatMonExact(remaining)}</strong><small>Before deploy trigger</small></article>
+          <article class="stat-card"><span>Your Contribution</span><strong>${formatMonExact(token.userContributionMon)}</strong><small>Can withdraw before target</small></article>
+          <article class="stat-card"><span>Market Cap</span><strong>${formatUsdExact(token.marketCapUsd)}</strong><small>Synced app estimate</small></article>
+          <article class="stat-card"><span>Total Buyback</span><strong>${formatMonExact(token.buybackMon)}</strong><small>Protocol buyback total</small></article>
         </div>
       </section>
   ` : `
@@ -454,12 +498,51 @@ function renderLaunchDetail(id) {
           </div>
         </div>
         <div class="summary-grid launched-stats">
-          <article class="stat-card"><span>Market Cap</span><strong>${formatCompact(token.marketCapUsd, "$")}</strong><small>Synced app estimate</small></article>
-          <article class="stat-card"><span>Total Buyback</span><strong>${formatCompact(token.buybackMon)} MON</strong><small>Protocol buyback total</small></article>
-          <article class="stat-card"><span>Mine Pool</span><strong>${formatCompact(token.mineTokens)} ${escapeHtml(token.ticker)}</strong><small>${escapeHtml(token.mineEpoch)}</small></article>
+          <article class="stat-card"><span>Market Cap</span><strong>${formatUsdExact(token.marketCapUsd)}</strong><small>Synced app estimate</small></article>
+          <article class="stat-card"><span>Total Buyback</span><strong>${formatMonExact(token.buybackMon)}</strong><small>Protocol buyback total</small></article>
+          <article class="stat-card"><span>Mine Pool</span><strong>${formatTokenExact(token.mineTokens, escapeHtml(token.ticker))}</strong><small>${escapeHtml(token.mineEpoch)}</small></article>
         </div>
       </section>
   `;
+
+  const tokenomicsPanel = isLive ? `
+      <section class="panel">
+        <div class="panel-head compact">
+          <div>
+            <h2>Tokenomics</h2>
+            <p>Launch allocation preview based on the configured MON raise.</p>
+          </div>
+        </div>
+        <div class="tokenomics-mini">
+          <div class="stacked-bar tokenomics-bar">
+            <div style="width:${tokenomics.publicSale}%; background:var(--public)">${tokenomics.publicSale.toFixed(1)}%</div>
+            <div style="width:${tokenomics.liquidity}%; background:var(--liquidity)">${tokenomics.liquidity.toFixed(1)}%</div>
+            <div style="width:${tokenomics.community}%; background:var(--community)">${tokenomics.community.toFixed(1)}%</div>
+          </div>
+          <div class="card-metrics">
+            <div class="mini-metric"><span>Public Sale</span><strong>${tokenomics.publicSale.toFixed(1)}%</strong></div>
+            <div class="mini-metric"><span>Liquidity</span><strong>${tokenomics.liquidity.toFixed(1)}%</strong></div>
+            <div class="mini-metric"><span>Community</span><strong>${tokenomics.community.toFixed(1)}%</strong></div>
+          </div>
+        </div>
+      </section>
+  ` : "";
+
+  const projectInfoPanel = isLive ? `
+      <section class="panel">
+        <div class="panel-head compact">
+          <div>
+            <h2>Project Information</h2>
+            <p>Additional launch details provided by the deployer.</p>
+          </div>
+        </div>
+        <div class="project-info">
+          <article><span>Introduction</span><p>${escapeHtml(token.details?.introduction || token.summary)}</p></article>
+          <article><span>How it Works</span><p>${escapeHtml(token.details?.how || "Community allocation is reserved for post-launch programs.")}</p></article>
+          <article><span>Roadmap</span><p>${escapeHtml(token.details?.roadmap || "Launch, mine, and expand trading incentives.")}</p></article>
+        </div>
+      </section>
+  ` : "";
 
   refs.launchDetail.innerHTML = `
     <div class="detail-main">
@@ -479,11 +562,15 @@ function renderLaunchDetail(id) {
 
       ${fundingPanel}
 
+      ${tokenomicsPanel}
+
+      ${projectInfoPanel}
+
       ${message}
 
       ${tradeMinePanel}
 
-      <section id="buybackPrintArea" class="panel">
+      ${launched ? `<section id="buybackPrintArea" class="panel">
         <div class="panel-head compact">
           <div>
             <h2>Buyback Transactions</h2>
@@ -492,13 +579,13 @@ function renderLaunchDetail(id) {
         </div>
         <div class="tx-list">${txRows}</div>
         <button class="print-btn" type="button" data-action="print">Print transactions</button>
-      </section>
+      </section>` : ""}
     </div>
 
     <aside class="detail-side">
       ${investPanel}
       ${postLaunchPanel}
-      <section class="panel">
+      ${launched ? `<section class="panel">
         <div class="panel-head compact">
           <div>
             <h2>Mine Allocation</h2>
@@ -508,16 +595,16 @@ function renderLaunchDetail(id) {
         <div class="allocation-list">
           <article class="allocation-card public">
             <span>Mineable Amount</span>
-            <strong>${formatCompact(token.mineTokens)} ${escapeHtml(token.ticker)}</strong>
+            <strong>${formatTokenExact(token.mineTokens, escapeHtml(token.ticker))}</strong>
             <small>${escapeHtml(token.mineEpoch)}</small>
           </article>
           <article class="allocation-card liquidity">
             <span>Mine Value</span>
-            <strong>${formatCompact(token.mineValueUsd, "$")}</strong>
+            <strong>${formatUsdExact(token.mineValueUsd)}</strong>
             <small>At current token estimate</small>
           </article>
         </div>
-      </section>
+      </section>` : ""}
     </aside>
   `;
 
@@ -823,31 +910,39 @@ refs.launchDetail.addEventListener("click", (event) => {
   }
 
   const token = tokenById(actionTarget.dataset.id);
+  if (action === "max") {
+    const input = $("detailInvestInput");
+    if (input) input.value = Math.min(tokenRemaining(token), token.walletBalanceMon || 0);
+    return;
+  }
+
   if (action === "invest") {
     const input = $("detailInvestInput");
     const requested = Math.max(0, Number(input?.value) || 0);
-    const amount = Math.min(requested, tokenRemaining(token));
+    const amount = Math.min(requested, tokenRemaining(token), token.walletBalanceMon || 0);
     if (amount <= 0 || token.status !== "Live") return;
     token.raisedMon += amount;
     token.userContributionMon += amount;
+    token.walletBalanceMon = Math.max(0, (token.walletBalanceMon || 0) - amount);
     if (token.raisedMon >= token.targetMon) {
       token.raisedMon = token.targetMon;
       token.status = "Launched";
-      launchState.detailMessage = `${token.name} reached its MON target. Deploy is triggered and exits are now closed.`;
+      launchState.detailMessage = `${token.name} reached its MON target. Deploy is triggered and withdrawals are now closed.`;
     } else {
-      launchState.detailMessage = `Invested ${formatCompact(amount)} MON into ${token.name}.`;
+      launchState.detailMessage = `Invested ${formatMonExact(amount)} into ${token.name}.`;
     }
     renderLaunchDetail(token.id);
     renderLaunchDashboard();
   }
 
-  if (action === "exit" && token.status === "Live" && token.userContributionMon > 0) {
+  if (action === "withdraw" && token.status === "Live" && token.userContributionMon > 0) {
     const amount = token.userContributionMon;
     token.raisedMon = Math.max(0, token.raisedMon - amount);
     token.userContributionMon = 0;
-    launchState.detailMessage = `Exited ${formatCompact(amount)} MON. Funds are no longer locked in this live raise.`;
+    token.walletBalanceMon = (token.walletBalanceMon || 0) + amount;
+    launchState.detailMessage = `Withdrew ${formatMonExact(amount)}. Funds are no longer locked in this live raise.`;
     renderLaunchDetail(token.id);
-    renderLaunchList();
+    renderLaunchDashboard();
   }
 });
 

@@ -267,6 +267,32 @@ button {
   font-weight: 700;
 }
 
+.dash-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.dash-actions a {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 32px;
+  border: 1px solid var(--border-default);
+  border-radius: 4px;
+  background: var(--bg-panel);
+  color: var(--text-primary);
+  font-size: 12px;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.dash-actions a.external {
+  border-color: var(--accent-long);
+  background: var(--accent-long);
+  color: var(--text-on-accent);
+}
+
 .mine-split {
   display: flex;
   justify-content: space-between;
@@ -507,7 +533,7 @@ button {
 
 .action-buttons {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 0.7fr 1fr 1fr;
   gap: 8px;
 }
 
@@ -538,6 +564,12 @@ button {
   background: var(--accent-long);
 }
 
+.action-buttons .max-btn {
+  color: var(--accent-long);
+  border-color: var(--accent-long-deep);
+  background: var(--accent-long-bg);
+}
+
 .action-buttons .exit-btn {
   color: var(--accent-short);
   border-color: var(--accent-short-deep);
@@ -548,6 +580,36 @@ button {
   display: grid;
   gap: 8px;
   padding: 14px;
+}
+
+.tokenomics-mini,
+.project-info {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+}
+
+.tokenomics-bar {
+  margin: 0;
+}
+
+.project-info article {
+  display: grid;
+  gap: 6px;
+  padding: 12px;
+  border: 1px solid var(--border-default);
+  border-radius: 6px;
+  background: var(--bg-surface-1);
+}
+
+.project-info span {
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.project-info p {
+  color: var(--text-secondary);
 }
 
 .trade-mine-panel {
