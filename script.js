@@ -977,9 +977,11 @@ function render({ clamp = true } = {}) {
   refs.raiseEquivalent.textContent = `USD equivalent: ${formatUsdExact(state.raiseValue * state.monUsd)}`;
   configureRange();
 
-  refs.graduationBadge.textContent = model.graduated ? "Graduated" : "Below Threshold";
-  refs.statusValue.textContent = model.graduated ? "Graduated" : "Not Graduated";
-  refs.statusMeta.textContent = `Curve ${formatCompact(COST_GRAD_LV)} MON / DEX ${formatCompact(Math.max(0, model.dexSpend))} MON`;
+  refs.graduationBadge.textContent = model.graduated ? "Ready" : "Below Minimum";
+  refs.statusValue.textContent = model.graduated ? "Target Set" : "Below Minimum";
+  refs.statusMeta.textContent = model.graduated
+    ? `Deploy triggers only when ${formatWhole(state.raiseValue, "", " MON")} is fully raised.`
+    : `Set at least ${formatWhole(floor, "", " MON")} to enable launch.`;
   refs.mcUsd.textContent = formatCompact(model.mcCurve * state.monUsd, "$");
   refs.mcLv.textContent = `${formatCompact(model.mcCurve)} MON`;
   refs.spotLv.textContent = `${model.pCurve.toPrecision(4)} MON`;
