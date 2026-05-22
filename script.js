@@ -463,10 +463,12 @@ function renderLaunchDetail(id) {
         <span>Invest Amount</span>
         <div class="amount-input">
           <input id="detailInvestInput" type="number" min="0" max="${maxInvest}" step="1000" value="${Math.min(10_000, maxInvest)}">
-          <button class="inline-max-btn" type="button" data-action="max" data-id="${token.id}">Max</button>
           <strong>MON</strong>
         </div>
-        <small>Available space: ${formatMonExact(remaining)} · Balance: ${formatMonExact(token.walletBalanceMon || 0)}</small>
+        <small class="invest-meta">
+          <span>Available space: ${formatMonExact(remaining)} · Balance: ${formatMonExact(token.walletBalanceMon || 0)}</span>
+          <button class="inline-max-btn" type="button" data-action="max" data-id="${token.id}">Max</button>
+        </small>
       </label>
       <div class="action-buttons">
         <button class="invest-btn" type="button" data-action="invest" data-id="${token.id}">Invest</button>

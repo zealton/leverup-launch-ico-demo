@@ -663,9 +663,23 @@ button {
   margin-bottom: 12px;
 }
 
+.invest-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: center;
+}
+
+.invest-meta span {
+  min-width: 0;
+  color: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+}
+
 .action-buttons {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: 8px;
 }
 
@@ -703,16 +717,18 @@ button {
 }
 
 .action-buttons .exit-btn {
-  color: var(--accent-short);
-  border-color: var(--accent-short-deep);
-  background: var(--accent-short-bg);
+  color: var(--text-muted);
+  border-color: var(--border-default);
+  background: var(--bg-surface-1);
+}
+
+.action-buttons .exit-btn:not(:disabled):hover {
+  color: var(--text-secondary);
+  border-color: var(--border-strong);
 }
 
 .inline-max-btn {
-  align-self: stretch;
-  min-width: 48px;
   border: 0;
-  border-left: 1px solid var(--border-default);
   background: transparent;
   color: var(--accent-long);
   font-size: 12px;
@@ -720,7 +736,7 @@ button {
 }
 
 .inline-max-btn:hover {
-  background: var(--accent-long-bg);
+  color: var(--accent-long-strong);
 }
 
 .external-actions {
@@ -1210,10 +1226,6 @@ h2 {
   display: grid;
   grid-template-columns: 1fr auto;
   align-items: center;
-}
-
-.amount-input:has(.inline-max-btn) {
-  grid-template-columns: minmax(0, 1fr) auto auto;
 }
 
 .input-action input,
